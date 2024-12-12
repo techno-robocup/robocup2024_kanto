@@ -35,7 +35,7 @@ cnt = 0
 class LINE:
 
     def __init__(self, vertical, horizontal):
-        self.target_url = f"http://roboberry.local:81/techno_cam/line_colors?latlx=1008&latly=0&labrx=3608&labry=2592&bc_h={str(horizontal)}&bc_v={str(vertical)}&bg_h=50&bg_v=50"
+        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=1008&latly=0&labrx=3608&labry=2592&bc_h="+str(horizontal)+"&bc_v="+{str(vertical)}+"&bg_h=50&bg_v=50"
 
     def getdata(self):
         try:
@@ -64,6 +64,11 @@ def isgreenhue(hue: int):
 
 LINE_TRACE_SENSOR = LINE(3, 3)
 RESCUE_OBJECT_DETECTION_SENSOR = RESCUE_OBJ_DETECTION()
+
+while True:
+    print(LINE_TRACE_SENSOR.getdata())
+    print(RESCUE_OBJECT_DETECTION_SENSOR.getdata())
+
 while True:
     cnt += 1
     if Button.CENTER in EV3.buttons.pressed():

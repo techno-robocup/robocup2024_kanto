@@ -1,0 +1,1 @@
+scp main.py robot@ev3dev.local:
