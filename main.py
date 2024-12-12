@@ -35,7 +35,8 @@ cnt = 0
 class LINE:
 
     def __init__(self, vertical, horizontal):
-        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=1008&latly=0&labrx=3608&labry=2592&bc_h="+str(horizontal)+"&bc_v="+{str(vertical)}+"&bg_h=50&bg_v=50"
+        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=1008&latly=0&labrx=3608&labry=2592&bc_h=" + str(
+            horizontal) + "&bc_v=" + {str(vertical)} + "&bg_h=50&bg_v=50"
 
     def getdata(self):
         try:
