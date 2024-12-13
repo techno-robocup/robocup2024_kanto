@@ -35,11 +35,11 @@ cnt = 0
 class LINE:
 
     def __init__(self, vertical, horizontal):
-        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=1008&latly=0&labrx=3608&labry=2592&bc_h="+str(horizontal)+"&bc_v="+{str(vertical)}+"&bg_h=50&bg_v=50"
+        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=1008&latly=0&labrx=3608&labry=2592&bc_h="+str(horizontal)+"&bc_v="+str(vertical)+"&bg_h=50&bg_v=50"
 
     def getdata(self):
         try:
-            json_data = urequests.get(self.target_url).json
+            json_data = urequests.get(self.target_url).json()
         except:
             return None
         return json_data["colors"]
@@ -52,7 +52,7 @@ class RESCUE_OBJ_DETECTION:
 
     def getdata(self):
         try:
-            json_data = urequests.get(self.target_url).json
+            json_data = urequests.get(self.target_url).json()
         except:
             return None
         return json_data["objects"]
