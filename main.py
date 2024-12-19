@@ -7,22 +7,24 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 import urequests
+import socket
+import time
 
 EV3 = EV3Brick()
 MOTORL = Motor(Port.C)
 MOTORR = Motor(Port.D)
 MOTORARMBASE = Motor(Port.B)
 MOTORARMHANDS = Motor(Port.A)
-TOUCHL = TouchSensor(Port.S4)
-TOUCHR = TouchSensor(Port.S3)
+# TOUCHL = TouchSensor(Port.S4)
+# TOUCHR = TouchSensor(Port.S3)
 
 DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
-DEFAULTSPEED = 140
-DEFAULTPROPORTION = 1.1
-DEFAULTI = 0.00055
-DEFAULTD = 15
+DEFAULTSPEED = 70
+DEFAULTPROPORTION = 0.1
+DEFAULTI = 0.3
+DEFAULTD = 0.3
 ACCUMI = 0
 ACCUMD = 0
 WHITETHRESHOLD = 100
@@ -31,11 +33,12 @@ BEFLNUM = 0
 BEFRNUM = 0
 cnt = 0
 
+# MOTORARMBASE.run(-100)
 
 class LINE:
 
     def __init__(self, vertical, horizontal):
-        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=1008&latly=0&labrx=3608&labry=2592&bc_h="+str(horizontal)+"&bc_v="+str(vertical)+"&bg_h=50&bg_v=50"
+        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=408&latly=0&labrx=4208&labry=2592&bc_h=3&bc_v=3&bg_h=1200&bg_v=500"
 
     def getdata(self):
         try:
@@ -65,9 +68,8 @@ def isgreenhue(hue: int):
 LINE_TRACE_SENSOR = LINE(3, 3)
 RESCUE_OBJECT_DETECTION_SENSOR = RESCUE_OBJ_DETECTION()
 
-while True:
-    print(LINE_TRACE_SENSOR.getdata())
-    print(RESCUE_OBJECT_DETECTION_SENSOR.getdata())
+# while True:
+#     MOTORARMHANDS.run(-200)
 
 while True:
     cnt += 1
@@ -81,45 +83,20 @@ while True:
                 EV3.speaker.beep()
                 time.sleep(0.5)
                 break
-    if now := LINE_TRACE_SENSOR.getdata() is None:
-        continue
-    else:
-        ISUM = now[1][0] - now[7][0]
-        DSUM = (BEFLNUM - BEFRNUM) - (now[1][0] - now[7][0])
-        MOTORL.run(DEFAULTSPEED + DEFAULTPROPORTION * (now[1][0] - now[7][0]) +
-                   DEFAULTI * ACCUMI + DEFAULTD * ACCUMD)
-        MOTORR.run(DEFAULTSPEED + DEFAULTPROPORTION * (now[7][0] - now[1][0]) -
-                   DEFAULTI * ACCUMI - DEFAULTD * ACCUMD)
-        BEFLNUM = now[1][0]
-        BEFRNUM = now[7][0]
-    if cnt >= 20 and BLACKTHRESHOLD >= now[1][
-            0] and not BLACKTHRESHOLD >= now[7][0]:
-        EV3.speaker.beep()
-        while BLACKTHRESHOLD >= now[1][0]:
-            now = LINE_TRACE_SENSOR.getdata()
-            MOTORL.run(200)
-            MOTORR.run(200)
-        while not BLACKTHRESHOLD >= now[7][0]:
-            now = LINE_TRACE_SENSOR.getdata()
-            MOTORL.run(-200)
-            MOTORR.run(200)
-        MOTORL.run(200)
-        MOTORR.run(-200)
-        time.sleep(0.3)
-        cnt = 0
-    if cnt >= 20 and BLACKTHRESHOLD >= now[7][0] and not BLACKTHRESHOLD >= [
-            1
-    ][0]:
-        EV3.speaker.beep()
-        while BLACKTHRESHOLD >= [7][0]:
-            now = LINE_TRACE_SENSOR.getdata()
-            MOTORL.run(200)
-            MOTORR.run(200)
-        while not BLACKTHRESHOLD >= now[1][0]:
-            now = LINE_TRACE_SENSOR.getdata()
-            MOTORL.run(200)
-            MOTORR.run(-200)
-        MOTORL.run(-200)
-        MOTORR.run(200)
-        time.sleep(0.3)
-        cnt = 0
+    now = LINE_TRACE_SENSOR.getdata()
+    BOTTOM_LEFT = now[2][2]
+    BOTTOM_MIDDLE = now[5][2]
+    BOTTOM_RIGHT = now[8][2]
+    ACCUMI = BOTTOM_LEFT - BOTTOM_RIGHT
+    ACCUMD = (BEFLNUM - BEFRNUM) - (BOTTOM_LEFT - BOTTOM_RIGHT)
+    MOTORL.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_LEFT-BOTTOM_RIGHT)+DEFAULTI*ACCUMI+DEFAULTD*ACCUMD)
+    MOTORR.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_RIGHT-BOTTOM_LEFT)-DEFAULTI*ACCUMI-DEFAULTD*ACCUMD)
+    print(BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT)
+    print("P: ",(BOTTOM_LEFT-BOTTOM_RIGHT)*DEFAULTPROPORTION)
+    print("I: ",DEFAULTI*ACCUMI)
+    print("D: ",DEFAULTD*ACCUMD)
+    # print(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_LEFT-BOTTOM_RIGHT)+DEFAULTI*ACCUMI+DEFAULTD*ACCUMD, DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_RIGHT-BOTTOM_LEFT)-DEFAULTI*ACCUMI-DEFAULTD*ACCUMD)
+    # MOTORL.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_LEFT-BOTTOM_RIGHT))
+    # MOTORR.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_RIGHT-BOTTOM_LEFT))
+    BEFLNUM = BOTTOM_LEFT
+    BEFRNUM = BOTTOM_RIGHT
