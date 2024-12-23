@@ -21,14 +21,17 @@ MOTORARMHANDS = Motor(Port.A)
 DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
-DEFAULTSPEED = 70
+DEFAULTSPEED = 50
 DEFAULTPROPORTION = 0.1
-DEFAULTI = 0.3
-DEFAULTD = 0.3
+DEFAULTI = 0.2
+DEFAULTD = 0.03
 ACCUMI = 0
 ACCUMD = 0
+BOTTOM_LEFT = 0
+BOTTOM_RIGHT = 0
+BOTTOM_MIDDLE = 0
 WHITETHRESHOLD = 100
-BLACKTHRESHOLD = 50
+BLACKTHRESHOLD = 40
 BEFLNUM = 0
 BEFRNUM = 0
 cnt = 0
@@ -71,6 +74,15 @@ RESCUE_OBJECT_DETECTION_SENSOR = RESCUE_OBJ_DETECTION()
 # while True:
 #     MOTORARMHANDS.run(-200)
 
+def updatedata():
+    global BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT, ACCUMI, ACCUMD
+    now = LINE_TRACE_SENSOR.getdata()
+    BOTTOM_LEFT = now[2][2]
+    BOTTOM_MIDDLE = now[5][2]
+    BOTTOM_RIGHT = now[8][2]
+    ACCUMI = BOTTOM_LEFT - BOTTOM_RIGHT
+    ACCUMD = (BEFLNUM - BEFRNUM) - (BOTTOM_LEFT - BOTTOM_RIGHT)
+
 while True:
     cnt += 1
     if Button.CENTER in EV3.buttons.pressed():
@@ -83,14 +95,33 @@ while True:
                 EV3.speaker.beep()
                 time.sleep(0.5)
                 break
-    now = LINE_TRACE_SENSOR.getdata()
-    BOTTOM_LEFT = now[2][2]
-    BOTTOM_MIDDLE = now[5][2]
-    BOTTOM_RIGHT = now[8][2]
-    ACCUMI = BOTTOM_LEFT - BOTTOM_RIGHT
-    ACCUMD = (BEFLNUM - BEFRNUM) - (BOTTOM_LEFT - BOTTOM_RIGHT)
+    updatedata()
     MOTORL.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_LEFT-BOTTOM_RIGHT)+DEFAULTI*ACCUMI+DEFAULTD*ACCUMD)
     MOTORR.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_RIGHT-BOTTOM_LEFT)-DEFAULTI*ACCUMI-DEFAULTD*ACCUMD)
+    if BOTTOM_RIGHT < BLACKTHRESHOLD and cnt > 10:
+        MOTORL.brake()
+        MOTORR.brake()
+        EV3.speaker.beep()
+        print("!!")
+        while not BOTTOM_RIGHT < BLACKTHRESHOLD:
+            updatedata()
+            MOTORL.run(70)
+            MOTORR.run(70)
+        MOTORL.run(100)
+        MOTORR.run(100)
+        time.sleep(0.3)
+        updatedata()
+        while not BOTTOM_RIGHT < BLACKTHRESHOLD:
+            updatedata()
+            MOTORL.run(40)
+            MOTORR.run(-40)
+        while not BOTTOM_MIDDLE < BLACKTHRESHOLD:
+            updatedata()
+            MOTORL.run(40)
+            MOTORR.run(-40)
+        MOTORL.brake()
+        MOTORR.brake()
+        cnt = 0
     print(BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT)
     print("P: ",(BOTTOM_LEFT-BOTTOM_RIGHT)*DEFAULTPROPORTION)
     print("I: ",DEFAULTI*ACCUMI)
