@@ -22,6 +22,9 @@ DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
 DEFAULTSPEED = 50
+DEFAULTTURNSPEED = 40
+DEFAULTCNTTHRESHOLD = 10
+DEFAULTTIMEWAIT = 0.3
 DEFAULTPROPORTION = 0.1
 DEFAULTI = 0.2
 DEFAULTD = 0.03
@@ -123,29 +126,25 @@ while True:
     MOTORR.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_RIGHT - BOTTOM_LEFT) - DEFAULTI * ACCUMI -
                DEFAULTD * ACCUMD)
-    if BOTTOM_RIGHT < BLACKTHRESHOLD and cnt > 10:
+    if isblack(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1], BOTTOM_LEFT_OBJ[2]) and cnt > DEFAULTCNTTHRESHOLD:
         MOTORL.brake()
         MOTORR.brake()
         EV3.speaker.beep()
-        print("!!")
-        while not BOTTOM_RIGHT < BLACKTHRESHOLD:
+        while isblack(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1], BOTTOM_LEFT_OBJ[2]):
             updatedata()
-            MOTORL.run(70)
-            MOTORR.run(70)
-        MOTORL.run(100)
-        MOTORR.run(100)
-        time.sleep(0.3)
-        updatedata()
-        while not BOTTOM_RIGHT < BLACKTHRESHOLD:
+            MOTORL.run(DEFAULTTURNSPEED)
+            MOTORR.run(DEFAULTTURNSPEED)
+        MOTORL.run(DEFAULTTURNSPEED)
+        MOTORR.run(DEFAULTTURNSPEED)
+        time.sleep(DEFAULTTIMEWAIT)
+        while not isblack(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1], BOTTOM_RIGHT_OBJ[2]):
             updatedata()
-            MOTORL.run(40)
-            MOTORR.run(-40)
-        while not BOTTOM_MIDDLE < BLACKTHRESHOLD:
+            MOTORL.run(-DEFAULTTURNSPEED)
+            MOTORR.run(DEFAULTTURNSPEED)
+        while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1], BOTTOM_MIDDLE_OBJ[2]):
             updatedata()
-            MOTORL.run(40)
-            MOTORR.run(-40)
-        MOTORL.brake()
-        MOTORR.brake()
+            MOTORL.run(DEFAULTTURNSPEED)
+            MOTORR.run(-DEFAULTTURNSPEED)
         cnt = 0
     print(BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT)
     print("P: ", (BOTTOM_LEFT - BOTTOM_RIGHT) * DEFAULTPROPORTION)
