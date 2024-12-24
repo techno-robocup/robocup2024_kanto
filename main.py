@@ -25,9 +25,9 @@ DEFAULTSPEED = 50
 DEFAULTTURNSPEED = 60
 DEFAULTCNTTHRESHOLD = 10
 DEFAULTTIMEWAIT = 0.5
-DEFAULTPROPORTION = 0.1
-DEFAULTI = 0.2
-DEFAULTD = 0.03
+DEFAULTPROPORTION = 0.3
+DEFAULTI = 0.5
+DEFAULTD = 0.05
 ACCUMI = 0
 ACCUMD = 0
 BOTTOM_LEFT = 0
@@ -50,12 +50,12 @@ TOP_MIDDLE_OBJ = []
 TOP_RIGHT_OBJ = []
 WHITETHRESHOLD = 100
 BLACKTHRESHOLD = 60
-SATURATIONTHRESHOLD = 80 # TODO need changes
+SATURATIONTHRESHOLD = 100
 BEFLNUM = 0
 BEFRNUM = 0
 cnt = 0
 
-# MOTORARMBASE.run(-100)
+MOTORARMBASE.run(-100)
 
 
 class LINE:
@@ -173,6 +173,7 @@ while True:
                 updatedata()
                 MOTORL.run(DEFAULTSPEED)
                 MOTORR.run(DEFAULTSPEED)
+                print(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1], BOTTOM_LEFT_OBJ[2])
             MOTORL.run(DEFAULTSPEED)
             MOTORR.run(DEFAULTSPEED)
             time.sleep(DEFAULTTIMEWAIT)
@@ -180,14 +181,13 @@ while True:
                 updatedata()
                 MOTORL.run(-DEFAULTSPEED)
                 MOTORR.run(DEFAULTSPEED)
-            cnt = 0
-    print()
-    print(*BOTTOM_LEFT_OBJ)
-    print(*BOTTOM_MIDDLE_OBJ)
-    print(*BOTTOM_RIGHT_OBJ)
-    print(*MIDDLE_LEFT_OBJ)
-    print(*MIDDLE_MIDDLE_OBJ)
-    print(*MIDDLE_RIGHT_OBJ)
+                print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1], BOTTOM_MIDDLE_OBJ[2])
+    # print(*BOTTOM_LEFT_OBJ)
+    # print(*BOTTOM_MIDDLE_OBJ)
+    # print(*BOTTOM_RIGHT_OBJ)
+    # print(*MIDDLE_LEFT_OBJ)
+    # print(*MIDDLE_MIDDLE_OBJ)
+    # print(*MIDDLE_RIGHT_OBJ)
     # print(*TOP_LEFT_OBJ)
     # print(*TOP_MIDDLE_OBJ)
     # print(*TOP_RIGHT_OBJ)
