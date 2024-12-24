@@ -96,7 +96,7 @@ def updatedata():
     ACCUMD = (BEFLNUM - BEFRNUM) - (BOTTOM_LEFT - BOTTOM_RIGHT)
 
 def isblack(h,s,v):
-    return v<BLACKTHRESHOLD and s < SATURATIONTHRESHOLD:
+    return v<BLACKTHRESHOLD and s < SATURATIONTHRESHOLD
 
 def iswhite(h,s,v):
     return v>WHITETHRESHOLD and s < SATURATIONTHRESHOLD
@@ -146,7 +146,9 @@ while True:
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(-DEFAULTTURNSPEED)
         cnt = 0
-    print(BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT)
+    print(*BOTTOM_LEFT_OBJ)
+    print(*BOTTOM_MIDDLE_OBJ)
+    print(*BOTTOM_RIGHT_OBJ)
     print("P: ", (BOTTOM_LEFT - BOTTOM_RIGHT) * DEFAULTPROPORTION)
     print("I: ", DEFAULTI * ACCUMI)
     print("D: ", DEFAULTD * ACCUMD)
