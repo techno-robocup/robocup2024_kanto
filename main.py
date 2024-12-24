@@ -22,23 +22,35 @@ DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
 DEFAULTSPEED = 50
-DEFAULTTURNSPEED = 40
+DEFAULTTURNSPEED = 60
 DEFAULTCNTTHRESHOLD = 10
-DEFAULTTIMEWAIT = 0.3
+DEFAULTTIMEWAIT = 0.5
 DEFAULTPROPORTION = 0.1
 DEFAULTI = 0.2
 DEFAULTD = 0.03
 ACCUMI = 0
 ACCUMD = 0
 BOTTOM_LEFT = 0
-BOTTOM_RIGHT = 0
 BOTTOM_MIDDLE = 0
+BOTTOM_RIGHT = 0
+MIDDLE_LEFT = 0
+MIDDLE_MIDDLE = 0
+MIDDLE_RIGHT = 0
+TOP_LEFT = 0
+TOP_MIDDLE = 0
+TOP_RIGHT = 0
 BOTTOM_LEFT_OBJ = []
 BOTTOM_RIGHT_OBJ = []
 BOTTOM_MIDDLE_OBJ = []
+MIDDLE_LEFT_OBJ = []
+MIDDLE_MIDDLE_OBJ = []
+MIDDLE_RIGHT_OBJ = []
+TOP_LEFT_OBJ = []
+TOP_MIDDLE_OBJ = []
+TOP_RIGHT_OBJ = []
 WHITETHRESHOLD = 100
-BLACKTHRESHOLD = 40
-SATURATIONTHRESHOLD = 30 # TODO need changes
+BLACKTHRESHOLD = 60
+SATURATIONTHRESHOLD = 80 # TODO need changes
 BEFLNUM = 0
 BEFRNUM = 0
 cnt = 0
@@ -49,7 +61,7 @@ cnt = 0
 class LINE:
 
     def __init__(self, vertical, horizontal):
-        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=408&latly=0&labrx=4208&labry=2592&bc_h=3&bc_v=3&bg_h=1200&bg_v=500"
+        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=408&latly=0&labrx=4208&labry=2592&bc_h=3&bc_v=3&bg_h=1200&bg_v=500&debug=true"
 
     def getdata(self):
         try:
@@ -84,14 +96,26 @@ RESCUE_OBJECT_DETECTION_SENSOR = RESCUE_OBJ_DETECTION()
 
 
 def updatedata():
-    global BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT, ACCUMI, ACCUMD, BOTTOM_LEFT_OBJ, BOTTOM_RIGHT_OBJ, BOTTOM_MIDDLE_OBJ, BEFLNUM, BEFRNUM
+    global BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT, MIDDLE_LEFT, MIDDLE_MIDDLE, MIDDLE_RIGHT, TOP_LEFT, TOP_MIDDLE, TOP_RIGHT, ACCUMI, ACCUMD, BOTTOM_LEFT_OBJ, BOTTOM_RIGHT_OBJ, BOTTOM_MIDDLE_OBJ, MIDDLE_LEFT_OBJ, MIDDLE_MIDDLE_OBJ, MIDDLE_RIGHT_OBJ, TOP_LEFT_OBJ, TOP_MIDDLE_OBJ, TOP_RIGHT_OBJ, BEFLNUM, BEFRNUM
     now = LINE_TRACE_SENSOR.getdata()
     BOTTOM_LEFT = now[2][2]
     BOTTOM_MIDDLE = now[5][2]
     BOTTOM_RIGHT = now[8][2]
+    MIDDLE_LEFT = now[1][2]
+    MIDDLE_MIDDLE = now[4][2]
+    MIDDLE_RIGHT = now[7][2]
+    TOP_LEFT = now[0][2]
+    TOP_MIDDLE = now[3][2]
+    TOP_RIGHT = now[6][2]
     BOTTOM_LEFT_OBJ = now[2]
     BOTTOM_MIDDLE_OBJ = now[5]
     BOTTOM_RIGHT_OBJ = now[8]
+    MIDDLE_LEFT_OBJ = now[1]
+    MIDDLE_MIDDLE_OBJ = now[4]
+    MIDDLE_RIGHT_OBJ = now[7]
+    TOP_LEFT_OBJ = now[0]
+    TOP_MIDDLE_OBJ = now[3]
+    TOP_RIGHT_OBJ = now[6]
     ACCUMI = BOTTOM_LEFT - BOTTOM_RIGHT
     ACCUMD = (BEFLNUM - BEFRNUM) - (BOTTOM_LEFT - BOTTOM_RIGHT)
 
@@ -107,11 +131,16 @@ def isgreen(h,s,v):
 def isred(h,s,v):
     return BLACKTHRESHOLD < v < WHITETHRESHOLD and (s < 10 or s > 170) # TODO need changes
 
+# while True:
+    # print(LINE_TRACE_SENSOR.getdata())
+
 while True:
     cnt += 1
     if Button.CENTER in EV3.buttons.pressed():
         MOTORL.brake()
         MOTORR.brake()
+        ACCUMI = 0
+        ACCUMD = 0
         EV3.speaker.beep()
         time.sleep(0.5)
         while True:
@@ -126,31 +155,45 @@ while True:
     MOTORR.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_RIGHT - BOTTOM_LEFT) - DEFAULTI * ACCUMI -
                DEFAULTD * ACCUMD)
-    if isblack(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1], BOTTOM_LEFT_OBJ[2]) and cnt > DEFAULTCNTTHRESHOLD:
+    if isblack(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1], BOTTOM_LEFT_OBJ[2]) and not isblack(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1], BOTTOM_RIGHT_OBJ[2]) and cnt > 10:
         MOTORL.brake()
         MOTORR.brake()
         EV3.speaker.beep()
-        while isblack(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1], BOTTOM_LEFT_OBJ[2]):
-            updatedata()
-            MOTORL.run(DEFAULTTURNSPEED)
-            MOTORR.run(DEFAULTTURNSPEED)
-        MOTORL.run(DEFAULTTURNSPEED)
-        MOTORR.run(DEFAULTTURNSPEED)
-        time.sleep(DEFAULTTIMEWAIT)
-        while not isblack(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1], BOTTOM_RIGHT_OBJ[2]):
-            updatedata()
-            MOTORL.run(-DEFAULTTURNSPEED)
-            MOTORR.run(DEFAULTTURNSPEED)
-        while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1], BOTTOM_MIDDLE_OBJ[2]):
-            updatedata()
-            MOTORL.run(DEFAULTTURNSPEED)
-            MOTORR.run(-DEFAULTTURNSPEED)
-        cnt = 0
+        time.sleep(0.5)
+        print(MIDDLE_MIDDLE_OBJ)
+        if isblack(MIDDLE_MIDDLE_OBJ[0], MIDDLE_MIDDLE_OBJ[1], MIDDLE_MIDDLE_OBJ[2]):
+            EV3.speaker.beep()
+            while isblack(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1], BOTTOM_LEFT_OBJ[2]):
+                updatedata()
+                MOTORL.run(DEFAULTSPEED)
+                MOTORR.run(DEFAULTSPEED)
+            cnt = 0
+        else:
+            while isblack(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1], BOTTOM_LEFT_OBJ[2]):
+                updatedata()
+                MOTORL.run(DEFAULTSPEED)
+                MOTORR.run(DEFAULTSPEED)
+            MOTORL.run(DEFAULTSPEED)
+            MOTORR.run(DEFAULTSPEED)
+            time.sleep(DEFAULTTIMEWAIT)
+            while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1], BOTTOM_MIDDLE_OBJ[2]):
+                updatedata()
+                MOTORL.run(-DEFAULTSPEED)
+                MOTORR.run(DEFAULTSPEED)
+            cnt = 0
+    print()
     print(*BOTTOM_LEFT_OBJ)
     print(*BOTTOM_MIDDLE_OBJ)
     print(*BOTTOM_RIGHT_OBJ)
-    print("P: ", (BOTTOM_LEFT - BOTTOM_RIGHT) * DEFAULTPROPORTION)
-    print("I: ", DEFAULTI * ACCUMI)
-    print("D: ", DEFAULTD * ACCUMD)
+    print(*MIDDLE_LEFT_OBJ)
+    print(*MIDDLE_MIDDLE_OBJ)
+    print(*MIDDLE_RIGHT_OBJ)
+    # print(*TOP_LEFT_OBJ)
+    # print(*TOP_MIDDLE_OBJ)
+    # print(*TOP_RIGHT_OBJ)
+    print()
+    # print("P: ", (BOTTOM_LEFT - BOTTOM_RIGHT) * DEFAULTPROPORTION)
+    # print("I: ", DEFAULTI * ACCUMI)
+    # print("D: ", DEFAULTD * ACCUMD)
     BEFLNUM = BOTTOM_LEFT
     BEFRNUM = BOTTOM_RIGHT
