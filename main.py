@@ -197,6 +197,40 @@ while True:
                 MOTORR.run(DEFAULTSPEED)
                 print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
                       BOTTOM_MIDDLE_OBJ[2])
+    if isblack(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1], BOTTOM_RIGHT_OBJ[2]) and not isblack(
+            BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1], BOTTOM_LEFT_OBJ[2]) and cnt > 10:
+        MOTORL.brake()
+        MOTORR.brake()
+        EV3.speaker.beep()
+        time.sleep(0.5)
+        print(MIDDLE_MIDDLE_OBJ)
+        if isblack(MIDDLE_MIDDLE_OBJ[0], MIDDLE_MIDDLE_OBJ[1],
+                   MIDDLE_MIDDLE_OBJ[2]):
+            EV3.speaker.beep()
+            while isblack(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1],
+                          BOTTOM_RIGHT_OBJ[2]):
+                updatedata()
+                MOTORL.run(DEFAULTSPEED)
+                MOTORR.run(DEFAULTSPEED)
+            cnt = 0
+        else:
+            while isblack(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1],
+                          BOTTOM_RIGHT_OBJ[2]):
+                updatedata()
+                MOTORL.run(DEFAULTSPEED)
+                MOTORR.run(DEFAULTSPEED)
+                print(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1],
+                      BOTTOM_RIGHT_OBJ[2])
+            MOTORL.run(DEFAULTSPEED)
+            MOTORR.run(DEFAULTSPEED)
+            time.sleep(DEFAULTTIMEWAIT)
+            while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
+                              BOTTOM_MIDDLE_OBJ[2]):
+                updatedata()
+                MOTORL.run(DEFAULTSPEED)
+                MOTORR.run(-DEFAULTSPEED)
+                print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
+                      BOTTOM_MIDDLE_OBJ[2])
     # print(*BOTTOM_LEFT_OBJ)
     # print(*BOTTOM_MIDDLE_OBJ)
     # print(*BOTTOM_RIGHT_OBJ)
