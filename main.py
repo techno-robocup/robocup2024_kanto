@@ -159,108 +159,54 @@ while True:
                 time.sleep(0.5)
                 break
     updatedata()
-    # if isblack(BOTTOM_LEFT_OBJ[0],BOTTOM_LEFT_OBJ[1],BOTTOM_LEFT_OBJ[2]):
-    #     LEFTBLACKCNT+=1
-    # else:
-    #     LEFTBLACKCNT=0
-    # if isblack(BOTTOM_MIDDLE_OBJ[0],BOTTOM_MIDDLE_OBJ[1],BOTTOM_MIDDLE_OBJ[2]):
-    #     MIDDLEBLACKCNT+=1
-    # else:
-    #     MIDDLEBLACKCNT=0
-    # if isblack(BOTTOM_RIGHT_OBJ[0],BOTTOM_RIGHT_OBJ[1],BOTTOM_RIGHT_OBJ[2]):
-    #     RIGHTBLACKCNT+=1
-    # else:
-    #     RIGHTBLACKCNT=0
-    MOTORL.run(DEFAULTSPEED + DEFAULTPROPORTION *
-               (BOTTOM_LEFT - BOTTOM_RIGHT) + DEFAULTI * ACCUMI +
-               DEFAULTD * ACCUMD)
-    MOTORR.run(DEFAULTSPEED + DEFAULTPROPORTION *
-               (BOTTOM_RIGHT - BOTTOM_LEFT) - DEFAULTI * ACCUMI -
-               DEFAULTD * ACCUMD)
-    # if LEFTBLACKCNT>=COLORCNTTHRESHOLD and RIGHTBLACKCNT<COLORCNTTHRESHOLD and cnt>10:
-    #     MOTORL.brake()
-    #     MOTORR.brake()
-    #     EV3.speaker.beep()
-    #     time.sleep(0.5)
-    #     print(MIDDLE_MIDDLE_OBJ)
-    #     if isblack(MIDDLE_MIDDLE_OBJ[0], MIDDLE_MIDDLE_OBJ[1],
-    #                MIDDLE_MIDDLE_OBJ[2]):
-    #         EV3.speaker.beep()
-    #         while isblack(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1],
-    #                       BOTTOM_LEFT_OBJ[2]):
-    #             updatedata()
-    #             MOTORL.run(DEFAULTSPEED)
-    #             MOTORR.run(DEFAULTSPEED)
-    #         cnt = 0
-    #     else:
-    #         while isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-    #                       BOTTOM_MIDDLE_OBJ[2]):
-    #             updatedata()
-    #             MOTORL.run(DEFAULTSPEED)
-    #             MOTORR.run(DEFAULTSPEED)
-    #             print(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1],
-    #                   BOTTOM_LEFT_OBJ[2])
-    #         MOTORL.run(DEFAULTSPEED)
-    #         MOTORR.run(DEFAULTSPEED)
-    #         # time.sleep(DEFAULTTIMEWAIT)
-    #         while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-    #                           BOTTOM_MIDDLE_OBJ[2]):
-    #             updatedata()
-    #             MOTORL.run(-DEFAULTSPEED)
-    #             MOTORR.run(DEFAULTSPEED)
-    #             print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-    #                                   BOTTOM_MIDDLE_OBJ[2])
-    #     cnt=0
-    #     ACCUMI=0
-    #     ACCUMD=0
-    # if RIGHTBLACKCNT>=COLORCNTTHRESHOLD and LEFTBLACKCNT<COLORCNTTHRESHOLD and cnt>10:
-    #     MOTORL.brake()
-    #     MOTORR.brake()
-    #     EV3.speaker.beep()
-    #     time.sleep(0.5)
-    #     print(MIDDLE_MIDDLE_OBJ)
-    #     if isblack(MIDDLE_MIDDLE_OBJ[0], MIDDLE_MIDDLE_OBJ[1],
-    #                MIDDLE_MIDDLE_OBJ[2]):
-    #         EV3.speaker.beep()
-    #         while isblack(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1],
-    #                       BOTTOM_RIGHT_OBJ[2]):
-    #             updatedata()
-    #             MOTORL.run(DEFAULTSPEED)
-    #             MOTORR.run(DEFAULTSPEED)
-    #         cnt = 0
-    #     else:
-    #         while isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-    #                       BOTTOM_MIDDLE_OBJ[2]):
-    #             updatedata()
-    #             MOTORL.run(DEFAULTSPEED)
-    #             MOTORR.run(DEFAULTSPEED)
-    #             print(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1],
-    #                   BOTTOM_RIGHT_OBJ[2])
-    #         MOTORL.run(DEFAULTSPEED)
-    #         MOTORR.run(DEFAULTSPEED)
-    #         # time.sleep(DEFAULTTIMEWAIT)
-    #         while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-    #                           BOTTOM_MIDDLE_OBJ[2]):
-    #             updatedata()
-    #             MOTORL.run(DEFAULTSPEED)
-    #             MOTORR.run(-DEFAULTSPEED)
-    #             print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-    #                   BOTTOM_MIDDLE_OBJ[2])
-    #     cnt = 0
-    #     ACCUMI=0
-    #     ACCUMD=0
-    print(*BOTTOM_LEFT_OBJ)
-    print(*BOTTOM_MIDDLE_OBJ)
-    print(*BOTTOM_RIGHT_OBJ)
-    print(*MIDDLE_LEFT_OBJ)
-    print(*MIDDLE_MIDDLE_OBJ)
-    print(*MIDDLE_RIGHT_OBJ)
-    print(*TOP_LEFT_OBJ)
-    print(*TOP_MIDDLE_OBJ)
-    print(*TOP_RIGHT_OBJ)
-    print()
+    # if is straight for a while
+    IS_BOTTOM_BLACK = isblack(BOTTOM_MIDDLE_OBJ[0],BOTTOM_MIDDLE_OBJ[1],BOTTOM_MIDDLE_OBJ[2])
+    IS_MIDDLE_BLACK = isblack(MIDDLE_MIDDLE_OBJ[0],MIDDLE_MIDDLE_OBJ[1],MIDDLE_MIDDLE_OBJ[2])
+    IS_TOP_BLACK = isblack(TOP_MIDDLE_OBJ[0],TOP_MIDDLE_OBJ[1],TOP_MIDDLE_OBJ[2])
+    if IS_BOTTOM_BLACK and IS_MIDDLE_BLACK and IS_TOP_BLACK:
+        DEFAULTSPEED = 100
+        DEFAULTPROPORTION = 0.23
+        DEFAULTI = 0.21
+        DEFAULTD = 0.21
+        MOTORL.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_LEFT-BOTTOM_RIGHT)+DEFAULTI*ACCUMI+DEFAULTD*ACCUMD)
+        MOTORR.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_RIGHT-BOTTOM_LEFT)-DEFAULTI*ACCUMI-DEFAULTD*ACCUMD)
+        print(3)
+    elif IS_BOTTOM_BLACK and IS_MIDDLE_BLACK:
+        DEFAULTSPEED = 80
+        DEFAULTPROPORTION = 0.23
+        DEFAULTI = 0.21
+        DEFAULTD = 0.21
+        MOTORL.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_LEFT-BOTTOM_RIGHT)+DEFAULTI*ACCUMI+DEFAULTD*ACCUMD)
+        MOTORR.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_RIGHT-BOTTOM_LEFT)-DEFAULTI*ACCUMI-DEFAULTD*ACCUMD)
+        print(2)
+    elif IS_BOTTOM_BLACK:
+        DEFAULTSPEED = 30
+        DEFAULTPROPORTION=0.08
+        DEFAULTI=0.1
+        DEFAULTD=0.4
+        MOTORL.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_LEFT-BOTTOM_RIGHT)+DEFAULTI*ACCUMI+DEFAULTD*ACCUMD)
+        MOTORR.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_RIGHT-BOTTOM_LEFT)-DEFAULTI*ACCUMI-DEFAULTD*ACCUMD)
+        print(1)
+    else:
+        DEFAULTSPEED = 30
+        DEFAULTPROPORTION=0.08
+        DEFAULTI=0.1
+        DEFAULTD=0.4
+        MOTORL.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_LEFT-BOTTOM_RIGHT)+DEFAULTI*ACCUMI+DEFAULTD*ACCUMD)
+        MOTORR.run(DEFAULTSPEED+DEFAULTPROPORTION*(BOTTOM_RIGHT-BOTTOM_LEFT)-DEFAULTI*ACCUMI-DEFAULTD*ACCUMD)
+        print(0)
+    # print(*BOTTOM_LEFT_OBJ)
+    # print(*BOTTOM_MIDDLE_OBJ)
+    # print(*BOTTOM_RIGHT_OBJ)
+    # print(*MIDDLE_LEFT_OBJ)
+    # print(*MIDDLE_MIDDLE_OBJ)
+    # print(*MIDDLE_RIGHT_OBJ)
+    # print(*TOP_LEFT_OBJ)
+    # print(*TOP_MIDDLE_OBJ)
+    # print(*TOP_RIGHT_OBJ)
     print("P: ", (BOTTOM_LEFT - BOTTOM_RIGHT) * DEFAULTPROPORTION)
     print("I: ", DEFAULTI * ACCUMI)
     print("D: ", DEFAULTD * ACCUMD)
+    print()
     BEFLNUM = BOTTOM_LEFT
     BEFRNUM = BOTTOM_RIGHT
