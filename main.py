@@ -21,13 +21,13 @@ MOTORARMHANDS = Motor(Port.A)
 DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
-DEFAULTSPEED = 60
-DEFAULTTURNSPEED = 60
+DEFAULTSPEED = 50
+DEFAULTTURNSPEED = 50
 DEFAULTCNTTHRESHOLD = 10
-DEFAULTTIMEWAIT = 0.2
-DEFAULTPROPORTION = 0.2
-DEFAULTI = 0.5
-DEFAULTD = 0.2
+DEFAULTTIMEWAIT = 0
+DEFAULTPROPORTION = 0.1
+DEFAULTI = 0.08
+DEFAULTD = 0.15
 ACCUMI = 0
 ACCUMD = 0
 BOTTOM_LEFT = 0
@@ -65,7 +65,7 @@ MOTORARMBASE.run(-100)
 class LINE:
 
     def __init__(self, vertical, horizontal):
-        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=408&latly=0&labrx=4208&labry=2592&bc_h=3&bc_v=3&bg_h=1200&bg_v=500&debug=true"
+        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=408&latly=0&labrx=4208&labry=2592&bc_h=3&bc_v=3&bg_h=500&bg_v=100&debug=true"
 
     def getdata(self):
         try:
@@ -210,7 +210,7 @@ while True:
                 MOTORR.run(DEFAULTSPEED)
                 print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
                       BOTTOM_MIDDLE_OBJ[2])
-    if RIGHTBLACKCNT>=COLORCNTTHRESHOLD and LEFTBLACKCNT<COLORTHRESHOLDD and cnt>10:
+    if RIGHTBLACKCNT>=COLORCNTTHRESHOLD and LEFTBLACKCNT<COLORCNTTHRESHOLD and cnt>10:
         MOTORL.brake()
         MOTORR.brake()
         EV3.speaker.beep()
@@ -243,18 +243,18 @@ while True:
                 MOTORR.run(-DEFAULTSPEED)
                 print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
                       BOTTOM_MIDDLE_OBJ[2])
-    # print(*BOTTOM_LEFT_OBJ)
-    # print(*BOTTOM_MIDDLE_OBJ)
-    # print(*BOTTOM_RIGHT_OBJ)
-    # print(*MIDDLE_LEFT_OBJ)
-    # print(*MIDDLE_MIDDLE_OBJ)
-    # print(*MIDDLE_RIGHT_OBJ)
-    # print(*TOP_LEFT_OBJ)
-    # print(*TOP_MIDDLE_OBJ)
-    # print(*TOP_RIGHT_OBJ)
+    print(*BOTTOM_LEFT_OBJ)
+    print(*BOTTOM_MIDDLE_OBJ)
+    print(*BOTTOM_RIGHT_OBJ)
+    print(*MIDDLE_LEFT_OBJ)
+    print(*MIDDLE_MIDDLE_OBJ)
+    print(*MIDDLE_RIGHT_OBJ)
+    print(*TOP_LEFT_OBJ)
+    print(*TOP_MIDDLE_OBJ)
+    print(*TOP_RIGHT_OBJ)
     print()
-    # print("P: ", (BOTTOM_LEFT - BOTTOM_RIGHT) * DEFAULTPROPORTION)
-    # print("I: ", DEFAULTI * ACCUMI)
-    # print("D: ", DEFAULTD * ACCUMD)
+    print("P: ", (BOTTOM_LEFT - BOTTOM_RIGHT) * DEFAULTPROPORTION)
+    print("I: ", DEFAULTI * ACCUMI)
+    print("D: ", DEFAULTD * ACCUMD)
     BEFLNUM = BOTTOM_LEFT
     BEFRNUM = BOTTOM_RIGHT
