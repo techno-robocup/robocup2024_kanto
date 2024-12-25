@@ -21,13 +21,13 @@ MOTORARMHANDS = Motor(Port.A)
 DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
-DEFAULTSPEED = 50
-DEFAULTTURNSPEED = 50
+DEFAULTSPEED = 30
+DEFAULTTURNSPEED = 30
 DEFAULTCNTTHRESHOLD = 10
 DEFAULTTIMEWAIT = 0
-DEFAULTPROPORTION = 0.1
-DEFAULTI = 0.08
-DEFAULTD = 0.15
+DEFAULTPROPORTION = 0.4
+DEFAULTI = 0.25
+DEFAULTD = 0.30
 ACCUMI = 0
 ACCUMD = 0
 BOTTOM_LEFT = 0
@@ -48,8 +48,8 @@ MIDDLE_RIGHT_OBJ = []
 TOP_LEFT_OBJ = []
 TOP_MIDDLE_OBJ = []
 TOP_RIGHT_OBJ = []
-WHITETHRESHOLD = 100
-BLACKTHRESHOLD = 30
+WHITETHRESHOLD = 160
+BLACKTHRESHOLD = 80
 SATURATIONTHRESHOLD = 130
 BEFLNUM = 0
 BEFRNUM = 0
@@ -57,7 +57,7 @@ cnt = 0
 LEFTBLACKCNT = 0
 MIDDLEBLACKCNT = 0
 RIGHTBLACKCNT = 0
-COLORCNTTHRESHOLD = 2
+COLORCNTTHRESHOLD = 1
 
 MOTORARMBASE.run(-100)
 
@@ -159,90 +159,96 @@ while True:
                 time.sleep(0.5)
                 break
     updatedata()
-    if isblack(BOTTOM_LEFT_OBJ[0],BOTTOM_LEFT_OBJ[1],BOTTOM_LEFT_OBJ[2]):
-        LEFTBLACKCNT+=1
-    else:
-        LEFTBLACKCNT=0
-    if isblack(BOTTOM_MIDDLE_OBJ[0],BOTTOM_MIDDLE_OBJ[1],BOTTOM_MIDDLE_OBJ[2]):
-        MIDDLEBLACKCNT+=1
-    else:
-        MIDDLEBLACKCNT=0
-    if isblack(BOTTOM_RIGHT_OBJ[0],BOTTOM_RIGHT_OBJ[1],BOTTOM_RIGHT_OBJ[2]):
-        RIGHTBLACKCNT+=1
-    else:
-        RIGHTBLACKCNT=0
+    # if isblack(BOTTOM_LEFT_OBJ[0],BOTTOM_LEFT_OBJ[1],BOTTOM_LEFT_OBJ[2]):
+    #     LEFTBLACKCNT+=1
+    # else:
+    #     LEFTBLACKCNT=0
+    # if isblack(BOTTOM_MIDDLE_OBJ[0],BOTTOM_MIDDLE_OBJ[1],BOTTOM_MIDDLE_OBJ[2]):
+    #     MIDDLEBLACKCNT+=1
+    # else:
+    #     MIDDLEBLACKCNT=0
+    # if isblack(BOTTOM_RIGHT_OBJ[0],BOTTOM_RIGHT_OBJ[1],BOTTOM_RIGHT_OBJ[2]):
+    #     RIGHTBLACKCNT+=1
+    # else:
+    #     RIGHTBLACKCNT=0
     MOTORL.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_LEFT - BOTTOM_RIGHT) + DEFAULTI * ACCUMI +
                DEFAULTD * ACCUMD)
     MOTORR.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_RIGHT - BOTTOM_LEFT) - DEFAULTI * ACCUMI -
                DEFAULTD * ACCUMD)
-    if LEFTBLACKCNT>=COLORCNTTHRESHOLD and RIGHTBLACKCNT<COLORCNTTHRESHOLD and cnt>10:
-        MOTORL.brake()
-        MOTORR.brake()
-        EV3.speaker.beep()
-        time.sleep(0.5)
-        print(MIDDLE_MIDDLE_OBJ)
-        if isblack(MIDDLE_MIDDLE_OBJ[0], MIDDLE_MIDDLE_OBJ[1],
-                   MIDDLE_MIDDLE_OBJ[2]):
-            EV3.speaker.beep()
-            while isblack(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1],
-                          BOTTOM_LEFT_OBJ[2]):
-                updatedata()
-                MOTORL.run(DEFAULTSPEED)
-                MOTORR.run(DEFAULTSPEED)
-            cnt = 0
-        else:
-            while isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-                          BOTTOM_MIDDLE_OBJ[2]):
-                updatedata()
-                MOTORL.run(DEFAULTSPEED)
-                MOTORR.run(DEFAULTSPEED)
-                print(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1],
-                      BOTTOM_LEFT_OBJ[2])
-            MOTORL.run(DEFAULTSPEED)
-            MOTORR.run(DEFAULTSPEED)
-            time.sleep(DEFAULTTIMEWAIT)
-            while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-                              BOTTOM_MIDDLE_OBJ[2]):
-                updatedata()
-                MOTORL.run(-DEFAULTSPEED)
-                MOTORR.run(DEFAULTSPEED)
-                print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-                      BOTTOM_MIDDLE_OBJ[2])
-    if RIGHTBLACKCNT>=COLORCNTTHRESHOLD and LEFTBLACKCNT<COLORCNTTHRESHOLD and cnt>10:
-        MOTORL.brake()
-        MOTORR.brake()
-        EV3.speaker.beep()
-        time.sleep(0.5)
-        print(MIDDLE_MIDDLE_OBJ)
-        if isblack(MIDDLE_MIDDLE_OBJ[0], MIDDLE_MIDDLE_OBJ[1],
-                   MIDDLE_MIDDLE_OBJ[2]):
-            EV3.speaker.beep()
-            while isblack(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1],
-                          BOTTOM_RIGHT_OBJ[2]):
-                updatedata()
-                MOTORL.run(DEFAULTSPEED)
-                MOTORR.run(DEFAULTSPEED)
-            cnt = 0
-        else:
-            while isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-                          BOTTOM_MIDDLE_OBJ[2]):
-                updatedata()
-                MOTORL.run(DEFAULTSPEED)
-                MOTORR.run(DEFAULTSPEED)
-                print(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1],
-                      BOTTOM_RIGHT_OBJ[2])
-            MOTORL.run(DEFAULTSPEED)
-            MOTORR.run(DEFAULTSPEED)
-            time.sleep(DEFAULTTIMEWAIT)
-            while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-                              BOTTOM_MIDDLE_OBJ[2]):
-                updatedata()
-                MOTORL.run(DEFAULTSPEED)
-                MOTORR.run(-DEFAULTSPEED)
-                print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-                      BOTTOM_MIDDLE_OBJ[2])
+    # if LEFTBLACKCNT>=COLORCNTTHRESHOLD and RIGHTBLACKCNT<COLORCNTTHRESHOLD and cnt>10:
+    #     MOTORL.brake()
+    #     MOTORR.brake()
+    #     EV3.speaker.beep()
+    #     time.sleep(0.5)
+    #     print(MIDDLE_MIDDLE_OBJ)
+    #     if isblack(MIDDLE_MIDDLE_OBJ[0], MIDDLE_MIDDLE_OBJ[1],
+    #                MIDDLE_MIDDLE_OBJ[2]):
+    #         EV3.speaker.beep()
+    #         while isblack(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1],
+    #                       BOTTOM_LEFT_OBJ[2]):
+    #             updatedata()
+    #             MOTORL.run(DEFAULTSPEED)
+    #             MOTORR.run(DEFAULTSPEED)
+    #         cnt = 0
+    #     else:
+    #         while isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
+    #                       BOTTOM_MIDDLE_OBJ[2]):
+    #             updatedata()
+    #             MOTORL.run(DEFAULTSPEED)
+    #             MOTORR.run(DEFAULTSPEED)
+    #             print(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1],
+    #                   BOTTOM_LEFT_OBJ[2])
+    #         MOTORL.run(DEFAULTSPEED)
+    #         MOTORR.run(DEFAULTSPEED)
+    #         # time.sleep(DEFAULTTIMEWAIT)
+    #         while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
+    #                           BOTTOM_MIDDLE_OBJ[2]):
+    #             updatedata()
+    #             MOTORL.run(-DEFAULTSPEED)
+    #             MOTORR.run(DEFAULTSPEED)
+    #             print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
+    #                                   BOTTOM_MIDDLE_OBJ[2])
+    #     cnt=0
+    #     ACCUMI=0
+    #     ACCUMD=0
+    # if RIGHTBLACKCNT>=COLORCNTTHRESHOLD and LEFTBLACKCNT<COLORCNTTHRESHOLD and cnt>10:
+    #     MOTORL.brake()
+    #     MOTORR.brake()
+    #     EV3.speaker.beep()
+    #     time.sleep(0.5)
+    #     print(MIDDLE_MIDDLE_OBJ)
+    #     if isblack(MIDDLE_MIDDLE_OBJ[0], MIDDLE_MIDDLE_OBJ[1],
+    #                MIDDLE_MIDDLE_OBJ[2]):
+    #         EV3.speaker.beep()
+    #         while isblack(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1],
+    #                       BOTTOM_RIGHT_OBJ[2]):
+    #             updatedata()
+    #             MOTORL.run(DEFAULTSPEED)
+    #             MOTORR.run(DEFAULTSPEED)
+    #         cnt = 0
+    #     else:
+    #         while isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
+    #                       BOTTOM_MIDDLE_OBJ[2]):
+    #             updatedata()
+    #             MOTORL.run(DEFAULTSPEED)
+    #             MOTORR.run(DEFAULTSPEED)
+    #             print(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1],
+    #                   BOTTOM_RIGHT_OBJ[2])
+    #         MOTORL.run(DEFAULTSPEED)
+    #         MOTORR.run(DEFAULTSPEED)
+    #         # time.sleep(DEFAULTTIMEWAIT)
+    #         while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
+    #                           BOTTOM_MIDDLE_OBJ[2]):
+    #             updatedata()
+    #             MOTORL.run(DEFAULTSPEED)
+    #             MOTORR.run(-DEFAULTSPEED)
+    #             print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
+    #                   BOTTOM_MIDDLE_OBJ[2])
+    #     cnt = 0
+    #     ACCUMI=0
+    #     ACCUMD=0
     print(*BOTTOM_LEFT_OBJ)
     print(*BOTTOM_MIDDLE_OBJ)
     print(*BOTTOM_RIGHT_OBJ)
