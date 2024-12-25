@@ -21,13 +21,13 @@ MOTORARMHANDS = Motor(Port.A)
 DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
-DEFAULTSPEED = 50
+DEFAULTSPEED = 60
 DEFAULTTURNSPEED = 60
 DEFAULTCNTTHRESHOLD = 10
-DEFAULTTIMEWAIT = 0.5
-DEFAULTPROPORTION = 0.3
+DEFAULTTIMEWAIT = 0.2
+DEFAULTPROPORTION = 0.2
 DEFAULTI = 0.5
-DEFAULTD = 0.05
+DEFAULTD = 0.2
 ACCUMI = 0
 ACCUMD = 0
 BOTTOM_LEFT = 0
@@ -49,11 +49,15 @@ TOP_LEFT_OBJ = []
 TOP_MIDDLE_OBJ = []
 TOP_RIGHT_OBJ = []
 WHITETHRESHOLD = 100
-BLACKTHRESHOLD = 60
-SATURATIONTHRESHOLD = 100
+BLACKTHRESHOLD = 30
+SATURATIONTHRESHOLD = 130
 BEFLNUM = 0
 BEFRNUM = 0
 cnt = 0
+LEFTBLACKCNT = 0
+MIDDLEBLACKCNT = 0
+RIGHTBLACKCNT = 0
+COLORCNTTHRESHOLD = 2
 
 MOTORARMBASE.run(-100)
 
@@ -155,16 +159,25 @@ while True:
                 time.sleep(0.5)
                 break
     updatedata()
+    if isblack(BOTTOM_LEFT_OBJ[0],BOTTOM_LEFT_OBJ[1],BOTTOM_LEFT_OBJ[2]):
+        LEFTBLACKCNT+=1
+    else:
+        LEFTBLACKCNT=0
+    if isblack(BOTTOM_MIDDLE_OBJ[0],BOTTOM_MIDDLE_OBJ[1],BOTTOM_MIDDLE_OBJ[2]):
+        MIDDLEBLACKCNT+=1
+    else:
+        MIDDLEBLACKCNT=0
+    if isblack(BOTTOM_RIGHT_OBJ[0],BOTTOM_RIGHT_OBJ[1],BOTTOM_RIGHT_OBJ[2]):
+        RIGHTBLACKCNT+=1
+    else:
+        RIGHTBLACKCNT=0
     MOTORL.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_LEFT - BOTTOM_RIGHT) + DEFAULTI * ACCUMI +
                DEFAULTD * ACCUMD)
     MOTORR.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_RIGHT - BOTTOM_LEFT) - DEFAULTI * ACCUMI -
                DEFAULTD * ACCUMD)
-    if isblack(BOTTOM_LEFT_OBJ[0],
-               BOTTOM_LEFT_OBJ[1], BOTTOM_LEFT_OBJ[2]) and not isblack(
-                   BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1],
-                   BOTTOM_RIGHT_OBJ[2]) and cnt > 10:
+    if LEFTBLACKCNT>=COLORCNTTHRESHOLD and RIGHTBLACKCNT<COLORCNTTHRESHOLD and cnt>10:
         MOTORL.brake()
         MOTORR.brake()
         EV3.speaker.beep()
@@ -180,8 +193,8 @@ while True:
                 MOTORR.run(DEFAULTSPEED)
             cnt = 0
         else:
-            while isblack(BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1],
-                          BOTTOM_LEFT_OBJ[2]):
+            while isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
+                          BOTTOM_MIDDLE_OBJ[2]):
                 updatedata()
                 MOTORL.run(DEFAULTSPEED)
                 MOTORR.run(DEFAULTSPEED)
@@ -197,8 +210,7 @@ while True:
                 MOTORR.run(DEFAULTSPEED)
                 print(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
                       BOTTOM_MIDDLE_OBJ[2])
-    if isblack(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1], BOTTOM_RIGHT_OBJ[2]) and not isblack(
-            BOTTOM_LEFT_OBJ[0], BOTTOM_LEFT_OBJ[1], BOTTOM_LEFT_OBJ[2]) and cnt > 10:
+    if RIGHTBLACKCNT>=COLORCNTTHRESHOLD and LEFTBLACKCNT<COLORTHRESHOLDD and cnt>10:
         MOTORL.brake()
         MOTORR.brake()
         EV3.speaker.beep()
@@ -214,8 +226,8 @@ while True:
                 MOTORR.run(DEFAULTSPEED)
             cnt = 0
         else:
-            while isblack(BOTTOM_RIGHT_OBJ[0], BOTTOM_RIGHT_OBJ[1],
-                          BOTTOM_RIGHT_OBJ[2]):
+            while isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
+                          BOTTOM_MIDDLE_OBJ[2]):
                 updatedata()
                 MOTORL.run(DEFAULTSPEED)
                 MOTORR.run(DEFAULTSPEED)
