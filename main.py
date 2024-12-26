@@ -23,7 +23,6 @@ DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
 DEFAULTSPEED = 30
 DEFAULTTURNSPEED = 30
-DEFAULTCNTTHRESHOLD = 10
 DEFAULTTIMEWAIT = 0
 DEFAULTPROPORTION = 0.4
 DEFAULTI = 0.25
@@ -53,11 +52,6 @@ BLACKTHRESHOLD = 80
 SATURATIONTHRESHOLD = 130
 BEFLNUM = 0
 BEFRNUM = 0
-cnt = 0
-LEFTBLACKCNT = 0
-MIDDLEBLACKCNT = 0
-RIGHTBLACKCNT = 0
-
 class LINE:
 
     def __init__(self, vertical, horizontal):
@@ -139,7 +133,6 @@ def isred(h, s, v):
 MOTORARMBASE.run(-100)
 
 while True:
-    cnt += 1
     if Button.CENTER in EV3.buttons.pressed():
         MOTORL.brake()
         MOTORR.brake()
@@ -159,6 +152,19 @@ while True:
     MOTORR.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_RIGHT - BOTTOM_LEFT) - DEFAULTI * ACCUMI -
                DEFAULTD * ACCUMD)
+    if isblack(MIDDLE_LEFT_OBJ[0],MIDDLE_LEFT_OBJ[1],MIDDLE_LEFT_OBJ[2]) and isblack(MIDDLE_MIDDLE_OBJ[0],MIDDLE_MIDDLE_OBJ[1],MIDDLE_MIDDLE_OBJ[2]) and isblack(MIDDLE_RIGHT_OBJ[0],MIDDLE_RIGHT_OBJ[1],MIDDLE_RIGHT_OBJ[2]) and iswhite(TOP_MIDDLE_OBJ[0],TOP_MIDDLE_OBJ[1],TOP_MIDDLE_OBJ[2]):
+        EV3.speaker.beep()
+        MOTORL.brake()
+        MOTORR.brake()
+        print("LEFT right degree")
+        while isblack(BOTTOM_MIDDLE_OBJ[0],BOTTOM_MIDDLE_OBJ[1],BOTTOM_MIDDLE_OBJ[2]):
+            updatedata()
+            MOTORL.run(DEFAULTTURNSPEED)
+            MOTORR.run(DEFAULTTURNSPEED)
+        while not isblack(BOTTOM_MIDDLE_OBJ[0],BOTTOM_MIDDLE_OBJ[1],BOTTOM_MIDDLE_OBJ[2]):
+            updatedata()
+            MOTORL.run(-DEFAULTTURNSPEED)
+            MOTORR.run(DEFAULTTURNSPEED)
     print(*BOTTOM_LEFT_OBJ)
     print(*BOTTOM_MIDDLE_OBJ)
     print(*BOTTOM_RIGHT_OBJ)
