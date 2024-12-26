@@ -152,7 +152,7 @@ while True:
     MOTORR.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_RIGHT - BOTTOM_LEFT) - DEFAULTI * ACCUMI -
                DEFAULTD * ACCUMD)
-    if isblack(MIDDLE_LEFT_OBJ[0],MIDDLE_LEFT_OBJ[1],MIDDLE_LEFT_OBJ[2]) and isblack(MIDDLE_MIDDLE_OBJ[0],MIDDLE_MIDDLE_OBJ[1],MIDDLE_MIDDLE_OBJ[2]) and isblack(MIDDLE_RIGHT_OBJ[0],MIDDLE_RIGHT_OBJ[1],MIDDLE_RIGHT_OBJ[2]) and iswhite(TOP_MIDDLE_OBJ[0],TOP_MIDDLE_OBJ[1],TOP_MIDDLE_OBJ[2]):
+    if isblack(MIDDLE_LEFT_OBJ[0],MIDDLE_LEFT_OBJ[1],MIDDLE_LEFT_OBJ[2]) and isblack(MIDDLE_MIDDLE_OBJ[0],MIDDLE_MIDDLE_OBJ[1],MIDDLE_MIDDLE_OBJ[2]) and iswhite(TOP_MIDDLE_OBJ[0],TOP_MIDDLE_OBJ[1],TOP_MIDDLE_OBJ[2]):
         EV3.speaker.beep()
         MOTORL.brake()
         MOTORR.brake()
@@ -165,6 +165,19 @@ while True:
             updatedata()
             MOTORL.run(-DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
+    if isblack(MIDDLE_RIGHT_OBJ[0],MIDDLE_RIGHT_OBJ[1],MIDDLE_RIGHT_OBJ[2]) and isblack(MIDDLE_MIDDLE_OBJ[0],MIDDLE_MIDDLE_OBJ[1],MIDDLE_MIDDLE_OBJ[2]) and iswhite(TOP_MIDDLE_OBJ[0],TOP_MIDDLE_OBJ[1],TOP_MIDDLE_OBJ[2]):
+        EV3.speaker.beep()
+        MOTORL.brake()
+        MOTORR.brake()
+        print("RIGHT right degree")
+        while isblack(BOTTOM_MIDDLE_OBJ[0],BOTTOM_MIDDLE_OBJ[1],BOTTOM_MIDDLE_OBJ[2]):
+            updatedata()
+            MOTORL.run(DEFAULTTURNSPEED)
+            MOTORR.run(DEFAULTTURNSPEED)
+        while not isblack(BOTTOM_MIDDLE_OBJ[0],BOTTOM_MIDDLE_OBJ[1],BOTTOM_MIDDLE_OBJ[2]):
+            updatedata()
+            MOTORL.run(DEFAULTTURNSPEED)
+            MOTORR.run(-DEFAULTTURNSPEED)
     print(*BOTTOM_LEFT_OBJ)
     print(*BOTTOM_MIDDLE_OBJ)
     print(*BOTTOM_RIGHT_OBJ)
