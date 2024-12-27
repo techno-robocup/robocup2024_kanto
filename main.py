@@ -28,7 +28,7 @@ DEBUGCOLORSENSOR = False
 DEFAULTSPEED = 50
 DEFAULTTURNSPEED = 50
 DEFAULTTIMEWAIT = 0
-DEFAULTPROPORTION = 0.4
+DEFAULTPROPORTION = 0.3
 DEFAULTI = 0.25
 DEFAULTD = 0.30
 ACCUMI = 0
@@ -77,7 +77,7 @@ class LINE:
                          VERTICAL_GAP)
 
     def getdata(self):
-        return client.line()
+        return client.line(debug=True)
 
 
 class RESCUE_OBJ_DETECTION:
@@ -188,6 +188,8 @@ while True:
             updatedata()
             MOTORL.run(-DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
+        ACCUMI=0
+        ACCUMD=0
     if isblack(MIDDLE_RIGHT_OBJ.h,
                MIDDLE_RIGHT_OBJ.s, MIDDLE_RIGHT_OBJ.v) and isblack(
                    MIDDLE_MIDDLE_OBJ.h,
@@ -208,6 +210,8 @@ while True:
             updatedata()
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(-DEFAULTTURNSPEED)
+        ACCUMI=0
+        ACCUMD=0
     print(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s, BOTTOM_LEFT_OBJ.v)
     print(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s, BOTTOM_MIDDLE_OBJ.v)
     print(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s, BOTTOM_RIGHT_OBJ.v)
