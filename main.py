@@ -12,8 +12,8 @@ import socket
 import time
 
 
-while True:
-    pass
+# while True:
+#     pass
 
 EV3 = EV3Brick()
 MOTORL = Motor(Port.C)
@@ -58,18 +58,23 @@ SATURATIONTHRESHOLD = 130
 BEFLNUM = 0
 BEFRNUM = 0
 
+client = TechnoClient(host="roboberry.local", port=8085)
+CLIENT_LEFT_TOP_X = 408
+CLIENT_LEFT_TOP_Y = 0
+CLIENT_RIGHT_BOTTOM_X = 4208
+CLIENT_RIGHT_BOTTOM_Y = 2592
+HORIZONTAL_BOX = 3
+VERTICAL_BOX=3
+HORIZONTAL_GAP=500
+VERTICAL_GAP=100
 
 class LINE:
 
-    def __init__(self, vertical, horizontal):
-        self.target_url = "http://roboberry.local:81/techno_cam/line_colors?latlx=408&latly=0&labrx=4208&labry=2592&bc_h=3&bc_v=3&bg_h=500&bg_v=100&debug=true"
+    def __init__(self):
+        client.line_info(CLIENT_LEFT_TOP_X,CLIENT_LEFT_TOP_Y,CLIENT_RIGHT_BOTTOM_X,CLIENT_RIGHT_BOTTOM_Y,HORIZONTAL_BOX,VERTICAL_BOX,HORIZONTAL_GAP, VERTICAL_GAP)
 
     def getdata(self):
-        try:
-            json_data = urequests.get(self.target_url).json()
-        except:
-            return None
-        return json_data["colors"]
+        return client.line()
 
 
 class RESCUE_OBJ_DETECTION:
@@ -89,22 +94,22 @@ def isgreenhue(hue: int):
     return 150 <= hue <= 210
 
 
-LINE_TRACE_SENSOR = LINE(3, 3)
+LINE_TRACE_SENSOR = LINE()
 RESCUE_OBJECT_DETECTION_SENSOR = RESCUE_OBJ_DETECTION()
 
 
 def updatedata():
     global BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT, MIDDLE_LEFT, MIDDLE_MIDDLE, MIDDLE_RIGHT, TOP_LEFT, TOP_MIDDLE, TOP_RIGHT, ACCUMI, ACCUMD, BOTTOM_LEFT_OBJ, BOTTOM_RIGHT_OBJ, BOTTOM_MIDDLE_OBJ, MIDDLE_LEFT_OBJ, MIDDLE_MIDDLE_OBJ, MIDDLE_RIGHT_OBJ, TOP_LEFT_OBJ, TOP_MIDDLE_OBJ, TOP_RIGHT_OBJ, BEFLNUM, BEFRNUM
-    now = LINE_TRACE_SENSOR.getdata()
-    BOTTOM_LEFT = now[2][2]
-    BOTTOM_MIDDLE = now[5][2]
-    BOTTOM_RIGHT = now[8][2]
-    MIDDLE_LEFT = now[1][2]
-    MIDDLE_MIDDLE = now[4][2]
-    MIDDLE_RIGHT = now[7][2]
-    TOP_LEFT = now[0][2]
-    TOP_MIDDLE = now[3][2]
-    TOP_RIGHT = now[6][2]
+    now = LINE_TRACE_SENSOR.getdata().colors
+    BOTTOM_LEFT = now[2].v
+    BOTTOM_MIDDLE = now[5].v
+    BOTTOM_RIGHT = now[8].v
+    MIDDLE_LEFT = now[1].v
+    MIDDLE_MIDDLE = now[4].v
+    MIDDLE_RIGHT = now[7].v
+    TOP_LEFT = now[0].v
+    TOP_MIDDLE = now[3].v
+    TOP_RIGHT = now[6].v
     BOTTOM_LEFT_OBJ = now[2]
     BOTTOM_MIDDLE_OBJ = now[5]
     BOTTOM_RIGHT_OBJ = now[8]
@@ -160,55 +165,49 @@ while True:
     MOTORR.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_RIGHT - BOTTOM_LEFT) - DEFAULTI * ACCUMI -
                DEFAULTD * ACCUMD)
-    if isblack(MIDDLE_LEFT_OBJ[0],
-               MIDDLE_LEFT_OBJ[1], MIDDLE_LEFT_OBJ[2]) and isblack(
-                   MIDDLE_MIDDLE_OBJ[0],
-                   MIDDLE_MIDDLE_OBJ[1], MIDDLE_MIDDLE_OBJ[2]) and iswhite(
-                       TOP_MIDDLE_OBJ[0], TOP_MIDDLE_OBJ[1],
-                       TOP_MIDDLE_OBJ[2]):
+    if isblack(MIDDLE_LEFT_OBJ.h,
+               MIDDLE_LEFT_OBJ.s, MIDDLE_LEFT_OBJ.v) and isblack(
+                   MIDDLE_MIDDLE_OBJ.h,
+                   MIDDLE_MIDDLE_OBJ.s, MIDDLE_MIDDLE_OBJ.v) and iswhite(
+                       TOP_MIDDLE_OBJ.h, TOP_MIDDLE_OBJ.s,
+                       TOP_MIDDLE_OBJ.v):
         EV3.speaker.beep()
         MOTORL.brake()
         MOTORR.brake()
         print("LEFT right degree")
-        while isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-                      BOTTOM_MIDDLE_OBJ[2]):
+        while isblack(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s,
+                      BOTTOM_MIDDLE_OBJ.v):
             updatedata()
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
-        while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-                          BOTTOM_MIDDLE_OBJ[2]):
+        while not isblack(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s,
+                          BOTTOM_MIDDLE_OBJ.v):
             updatedata()
             MOTORL.run(-DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
-    if isblack(MIDDLE_RIGHT_OBJ[0],
-               MIDDLE_RIGHT_OBJ[1], MIDDLE_RIGHT_OBJ[2]) and isblack(
-                   MIDDLE_MIDDLE_OBJ[0],
-                   MIDDLE_MIDDLE_OBJ[1], MIDDLE_MIDDLE_OBJ[2]) and iswhite(
-                       TOP_MIDDLE_OBJ[0], TOP_MIDDLE_OBJ[1],
-                       TOP_MIDDLE_OBJ[2]):
+    if isblack(MIDDLE_RIGHT_OBJ.h,
+               MIDDLE_RIGHT_OBJ.s, MIDDLE_RIGHT_OBJ.v) and isblack(
+                   MIDDLE_MIDDLE_OBJ.h,
+                   MIDDLE_MIDDLE_OBJ.s, MIDDLE_MIDDLE_OBJ.v) and iswhite(
+                       TOP_MIDDLE_OBJ.h, TOP_MIDDLE_OBJ.s,
+                       TOP_MIDDLE_OBJ.v):
         EV3.speaker.beep()
         MOTORL.brake()
         MOTORR.brake()
         print("RIGHT right degree")
-        while isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-                      BOTTOM_MIDDLE_OBJ[2]):
+        while isblack(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s,
+                      BOTTOM_MIDDLE_OBJ.v):
             updatedata()
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
-        while not isblack(BOTTOM_MIDDLE_OBJ[0], BOTTOM_MIDDLE_OBJ[1],
-                          BOTTOM_MIDDLE_OBJ[2]):
+        while not isblack(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s,
+                          BOTTOM_MIDDLE_OBJ.v):
             updatedata()
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(-DEFAULTTURNSPEED)
-    print(*BOTTOM_LEFT_OBJ)
-    print(*BOTTOM_MIDDLE_OBJ)
-    print(*BOTTOM_RIGHT_OBJ)
-    print(*MIDDLE_LEFT_OBJ)
-    print(*MIDDLE_MIDDLE_OBJ)
-    print(*MIDDLE_RIGHT_OBJ)
-    print(*TOP_LEFT_OBJ)
-    print(*TOP_MIDDLE_OBJ)
-    print(*TOP_RIGHT_OBJ)
+    print(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s, BOTTOM_LEFT_OBJ.v)
+    print(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s, BOTTOM_MIDDLE_OBJ.v)
+    print(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s, BOTTOM_RIGHT_OBJ.v)
     print()
     print("P: ", (BOTTOM_LEFT - BOTTOM_RIGHT) * DEFAULTPROPORTION)
     print("I: ", DEFAULTI * ACCUMI)
