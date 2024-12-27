@@ -25,8 +25,8 @@ MOTORARMHANDS = Motor(Port.A)
 DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
-DEFAULTSPEED = 30
-DEFAULTTURNSPEED = 30
+DEFAULTSPEED = 50
+DEFAULTTURNSPEED = 50
 DEFAULTTIMEWAIT = 0
 DEFAULTPROPORTION = 0.4
 DEFAULTI = 0.25
@@ -173,9 +173,10 @@ while True:
                    MIDDLE_MIDDLE_OBJ.h,
                    MIDDLE_MIDDLE_OBJ.s, MIDDLE_MIDDLE_OBJ.v) and iswhite(
                        TOP_MIDDLE_OBJ.h, TOP_MIDDLE_OBJ.s, TOP_MIDDLE_OBJ.v):
-        EV3.speaker.beep()
+        # EV3.speaker.beep()
         MOTORL.brake()
         MOTORR.brake()
+        time.sleep(1)
         print("LEFT right degree")
         while isblack(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s,
                       BOTTOM_MIDDLE_OBJ.v):
@@ -192,9 +193,10 @@ while True:
                    MIDDLE_MIDDLE_OBJ.h,
                    MIDDLE_MIDDLE_OBJ.s, MIDDLE_MIDDLE_OBJ.v) and iswhite(
                        TOP_MIDDLE_OBJ.h, TOP_MIDDLE_OBJ.s, TOP_MIDDLE_OBJ.v):
-        EV3.speaker.beep()
+        # EV3.speaker.beep()
         MOTORL.brake()
         MOTORR.brake()
+        time.sleep(1)
         print("RIGHT right degree")
         while isblack(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s,
                       BOTTOM_MIDDLE_OBJ.v):
