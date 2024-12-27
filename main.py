@@ -11,7 +11,6 @@ import urequests
 import socket
 import time
 
-
 # while True:
 #     pass
 
@@ -64,14 +63,18 @@ CLIENT_LEFT_TOP_Y = 0
 CLIENT_RIGHT_BOTTOM_X = 4208
 CLIENT_RIGHT_BOTTOM_Y = 2592
 HORIZONTAL_BOX = 3
-VERTICAL_BOX=3
-HORIZONTAL_GAP=500
-VERTICAL_GAP=100
+VERTICAL_BOX = 3
+HORIZONTAL_GAP = 500
+VERTICAL_GAP = 100
+
 
 class LINE:
 
     def __init__(self):
-        client.line_info(CLIENT_LEFT_TOP_X,CLIENT_LEFT_TOP_Y,CLIENT_RIGHT_BOTTOM_X,CLIENT_RIGHT_BOTTOM_Y,HORIZONTAL_BOX,VERTICAL_BOX,HORIZONTAL_GAP, VERTICAL_GAP)
+        client.line_info(CLIENT_LEFT_TOP_X, CLIENT_LEFT_TOP_Y,
+                         CLIENT_RIGHT_BOTTOM_X, CLIENT_RIGHT_BOTTOM_Y,
+                         HORIZONTAL_BOX, VERTICAL_BOX, HORIZONTAL_GAP,
+                         VERTICAL_GAP)
 
     def getdata(self):
         return client.line()
@@ -169,8 +172,7 @@ while True:
                MIDDLE_LEFT_OBJ.s, MIDDLE_LEFT_OBJ.v) and isblack(
                    MIDDLE_MIDDLE_OBJ.h,
                    MIDDLE_MIDDLE_OBJ.s, MIDDLE_MIDDLE_OBJ.v) and iswhite(
-                       TOP_MIDDLE_OBJ.h, TOP_MIDDLE_OBJ.s,
-                       TOP_MIDDLE_OBJ.v):
+                       TOP_MIDDLE_OBJ.h, TOP_MIDDLE_OBJ.s, TOP_MIDDLE_OBJ.v):
         EV3.speaker.beep()
         MOTORL.brake()
         MOTORR.brake()
@@ -189,8 +191,7 @@ while True:
                MIDDLE_RIGHT_OBJ.s, MIDDLE_RIGHT_OBJ.v) and isblack(
                    MIDDLE_MIDDLE_OBJ.h,
                    MIDDLE_MIDDLE_OBJ.s, MIDDLE_MIDDLE_OBJ.v) and iswhite(
-                       TOP_MIDDLE_OBJ.h, TOP_MIDDLE_OBJ.s,
-                       TOP_MIDDLE_OBJ.v):
+                       TOP_MIDDLE_OBJ.h, TOP_MIDDLE_OBJ.s, TOP_MIDDLE_OBJ.v):
         EV3.speaker.beep()
         MOTORL.brake()
         MOTORR.brake()
