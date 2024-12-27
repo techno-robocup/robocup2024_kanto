@@ -25,12 +25,12 @@ MOTORARMHANDS = Motor(Port.A)
 DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
-DEFAULTSPEED = 40
-DEFAULTTURNSPEED = 20
+DEFAULTSPEED = 50
+DEFAULTTURNSPEED = 30
 DEFAULTTIMEWAIT = 0
-DEFAULTPROPORTION = 0.18
+DEFAULTPROPORTION = 0.12
 DEFAULTI = 0.04
-DEFAULTD = 1.5
+DEFAULTD = 0
 ACCUMI = 0
 ACCUMD = 0
 BOTTOM_LEFT = 0
@@ -52,7 +52,7 @@ TOP_LEFT_OBJ = []
 TOP_MIDDLE_OBJ = []
 TOP_RIGHT_OBJ = []
 WHITETHRESHOLD = 160
-BLACKTHRESHOLD = 80
+BLACKTHRESHOLD = 70
 SATURATIONTHRESHOLD = 130
 BEFLNUM = 0
 BEFRNUM = 0
@@ -162,6 +162,10 @@ while True:
                 time.sleep(0.5)
                 break
     updatedata()
+    if isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v) and isblack(MIDDLE_MIDDLE_OBJ.h,MIDDLE_MIDDLE_OBJ.s,MIDDLE_MIDDLE_OBJ.v):
+        DEFAULTSPEED = 70
+    else:
+        DEFAULSPEED = 50
     MOTORL.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_LEFT - BOTTOM_RIGHT) + DEFAULTI * ACCUMI +
                DEFAULTD * ACCUMD)
@@ -190,7 +194,7 @@ while True:
             MOTORR.run(DEFAULTTURNSPEED)
         ACCUMI=0
         ACCUMD=0
-    if isblack(MIDDLE_RIGHT_OBJ.h,
+    elif isblack(MIDDLE_RIGHT_OBJ.h,
                MIDDLE_RIGHT_OBJ.s, MIDDLE_RIGHT_OBJ.v) and isblack(
                    MIDDLE_MIDDLE_OBJ.h,
                    MIDDLE_MIDDLE_OBJ.s, MIDDLE_MIDDLE_OBJ.v) and iswhite(
@@ -212,6 +216,22 @@ while True:
             MOTORR.run(-DEFAULTTURNSPEED)
         ACCUMI=0
         ACCUMD=0
+    elif isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+        print("left")
+        eliftempcnt = 0
+        while isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v) or eliftempcnt<10:
+            updatedata()
+            eliftempcnt+=1
+            MOTORL.run(-DEFAULTTURNSPEED)
+            MOTORR.run(DEFAULTTURNSPEED)
+    elif isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+        print("right")
+        eliftempcnt = 0
+        while isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v) or eliftempcnt<10:
+            updatedata()
+            eliftempcnt+=1
+            MOTORL.run(DEFAULTTURNSPEED)
+            MOTORR.run(-DEFAULTTURNSPEED)
     print(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s, BOTTOM_LEFT_OBJ.v)
     print(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s, BOTTOM_MIDDLE_OBJ.v)
     print(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s, BOTTOM_RIGHT_OBJ.v)
