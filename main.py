@@ -28,7 +28,7 @@ DEBUGCOLORSENSOR = False
 DEFAULTSPEED = 60
 DEFAULTTURNSPEED = 50
 DEFAULTTIMEWAIT = 0
-DEFAULTPROPORTION = 0.12
+DEFAULTPROPORTION = 0.2
 DEFAULTI = 0.04
 DEFAULTD = 0
 ACCUMI = 0
@@ -182,14 +182,10 @@ while True:
             print(eliftempcnt)
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
-        while not isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+        while not isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
             updatedata()
             MOTORL.run(-DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
-        while not isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
-            updatedata()
-            MOTORL.run(DEFAULTTURNSPEED)
-            MOTORR.run(-DEFAULTTURNSPEED)
     elif isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
         print("right")
         eliftempcnt=0
@@ -202,15 +198,10 @@ while True:
             print(eliftempcnt)
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
-        while not isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
-            updatedata()
-            print(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v)
-            MOTORL.run(DEFAULTTURNSPEED)
-            MOTORR.run(-DEFAULTTURNSPEED)
         while not isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
             updatedata()
-            MOTORL.run(-DEFAULTTURNSPEED)
-            MOTORR.run(DEFAULTTURNSPEED)
+            MOTORL.run(DEFAULTTURNSPEED)
+            MOTORR.run(-DEFAULTTURNSPEED)
     print(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s, BOTTOM_LEFT_OBJ.v)
     print(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s, BOTTOM_MIDDLE_OBJ.v)
     print(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s, BOTTOM_RIGHT_OBJ.v)
