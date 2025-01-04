@@ -25,7 +25,7 @@ MOTORARMHANDS = Motor(Port.A)
 DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
-DEFAULTSPEED = 50
+DEFAULTSPEED = 60
 DEFAULTTURNSPEED = 50
 DEFAULTTIMEWAIT = 0
 DEFAULTPROPORTION = 0.12
@@ -77,7 +77,7 @@ class LINE:
                          VERTICAL_GAP)
 
     def getdata(self):
-        return client.line()
+        return client.line(debug=True)
 
 
 class RESCUE_OBJ_DETECTION:
