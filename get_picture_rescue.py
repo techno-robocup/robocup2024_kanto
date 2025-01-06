@@ -24,12 +24,14 @@ class LINE:
 
 
 class RESCUE_OBJ_DETECTION:
+
     def getdata(self):
         return client.rescue(debug=True)
+
 
 LINE_TRACE_SENSOR = LINE()
 RESCUE_OBJECT_DETECTION_SENSOR = RESCUE_OBJ_DETECTION()
 
 while True:
-  now=RESCUE_OBJECT_DETECTION_SENSOR.getdata()
-  print(now)
+    now = RESCUE_OBJECT_DETECTION_SENSOR.getdata()
+    print(now)
