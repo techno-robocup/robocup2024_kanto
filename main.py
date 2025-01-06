@@ -26,9 +26,9 @@ DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
 DEFAULTSPEED = 60
-DEFAULTTURNSPEED = 50
+DEFAULTTURNSPEED = 40
 DEFAULTTIMEWAIT = 0
-DEFAULTPROPORTION = 0.3
+DEFAULTPROPORTION = 0.24
 DEFAULTI = 0.04
 DEFAULTD = 0
 ACCUMI = 0
@@ -53,7 +53,7 @@ TOP_MIDDLE_OBJ = []
 TOP_RIGHT_OBJ = []
 WHITETHRESHOLD = 160
 BLACKTHRESHOLD = 70
-SATURATIONTHRESHOLD = 130
+SATURATIONTHRESHOLD = 200
 BEFLNUM = 0
 BEFRNUM = 0
 
@@ -135,7 +135,7 @@ def iswhite(h, s, v):
 
 
 def isgreen(h, s, v):
-    return BLACKTHRESHOLD < v < WHITETHRESHOLD and 50 < h < 90  # TODO need changes
+    return BLACKTHRESHOLD < v < WHITETHRESHOLD and 50 < h < 70  and SATURATIONTHRESHOLD<s
 
 
 def isred(h, s, v):
@@ -170,46 +170,6 @@ while True:
     MOTORR.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_RIGHT - BOTTOM_LEFT) - DEFAULTI * ACCUMI -
                DEFAULTD * ACCUMD)
-    if isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
-        print("left")
-        eliftempcnt = 0
-        MOTORL.brake()
-        MOTORR.brake()
-        EV3.speaker.beep(frequency=440)
-        while isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v) and eliftempcnt<50:
-            updatedata()
-            eliftempcnt+=1
-            print(eliftempcnt)
-            MOTORL.run(DEFAULTTURNSPEED)
-            MOTORR.run(DEFAULTTURNSPEED)
-        while not isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
-            updatedata()
-            MOTORL.run(-DEFAULTTURNSPEED)
-            MOTORR.run(DEFAULTTURNSPEED)
-        MOTORL.run(DEFAULTTURNSPEED)
-        MOTORR.run(-DEFAULTTURNSPEED)
-        time.sleep(1.3)
-    elif isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
-        print("right")
-        eliftempcnt=0
-        MOTORL.brake()
-        MOTORR.brake()
-        EV3.speaker.beep(frequency=460)
-        while isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v) and eliftempcnt<50:
-            updatedata()
-            eliftempcnt+=1
-            print(eliftempcnt)
-            MOTORL.run(DEFAULTTURNSPEED)
-            MOTORR.run(DEFAULTTURNSPEED)
-        while not isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
-            updatedata()
-            MOTORL.run(DEFAULTTURNSPEED)
-            MOTORR.run(-DEFAULTTURNSPEED)
-        MOTORL.run(-DEFAULTTURNSPEED)
-        MOTORR.run(DEFAULTTURNSPEED)
-        time.sleep(1.3)
-    elif isgreen(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
-        
     print(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s, BOTTOM_LEFT_OBJ.v)
     print(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s, BOTTOM_MIDDLE_OBJ.v)
     print(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s, BOTTOM_RIGHT_OBJ.v)
@@ -217,5 +177,70 @@ while True:
     print("P: ", (BOTTOM_LEFT - BOTTOM_RIGHT) * DEFAULTPROPORTION)
     print("I: ", DEFAULTI * ACCUMI)
     print("D: ", DEFAULTD * ACCUMD)
+    if isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+        print("left")
+        eliftempcnt = 0
+        MOTORL.brake()
+        MOTORR.brake()
+        EV3.speaker.beep(frequency=440)
+        while isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v) and eliftempcnt<30:
+            updatedata()
+            eliftempcnt+=1
+            print(eliftempcnt)
+            MOTORL.run(DEFAULTTURNSPEED)
+            MOTORR.run(DEFAULTTURNSPEED)
+        while not isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v) and not isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+            updatedata()
+            MOTORL.run(-DEFAULTTURNSPEED)
+            MOTORR.run(DEFAULTTURNSPEED)
+        MOTORL.run(DEFAULTTURNSPEED)
+        MOTORR.run(-DEFAULTTURNSPEED)
+        time.sleep(0.8)
+    elif isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+        print("right")
+        eliftempcnt=0
+        MOTORL.brake()
+        MOTORR.brake()
+        EV3.speaker.beep(frequency=460)
+        while isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v) and eliftempcnt<30:
+            updatedata()
+            eliftempcnt+=1
+            print(eliftempcnt)
+            MOTORL.run(DEFAULTTURNSPEED)
+            MOTORR.run(DEFAULTTURNSPEED)
+        while not isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v) and not isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+            updatedata()
+            MOTORL.run(DEFAULTTURNSPEED)
+            MOTORR.run(-DEFAULTTURNSPEED)
+        MOTORL.run(-DEFAULTTURNSPEED)
+        MOTORR.run(DEFAULTTURNSPEED)
+        time.sleep(0.8)
+    elif isgreen(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+        print("green left")
+        MOTORL.brake()
+        MOTORR.brake()
+        EV3.speaker.beep(frequency=500)
+        MOTORL.run(DEFAULTTURNSPEED)
+        MOTORR.run(DEFAULTTURNSPEED)
+        time.sleep(1.5)
+        updatedata()
+        if isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+            while isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+                updatedata()
+                MOTORL.run(DEFAULTTURNSPEED)
+                MOTORR.run(DEFAULTTURNSPEED)
+            while isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
+                updatedata()
+                MOTORL.run(-DEFAULTTURNSPEED)
+                MOTORR.run(DEFAULTTURNSPEED)
+            while not isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
+                updatedata()
+                MOTORL.run(-DEFAULTTURNSPEED)
+                MOTORR.run(DEFAULTTURNSPEED)
+    elif isgreen(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+        print("green right")
+        MOTORL.brake()
+        MOTORR.brake()
+        EV3.speaker.beep(frequency=600)
     BEFLNUM = BOTTOM_LEFT
     BEFRNUM = BOTTOM_RIGHT
