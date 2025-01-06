@@ -28,7 +28,7 @@ DEBUGCOLORSENSOR = False
 DEFAULTSPEED = 60
 DEFAULTTURNSPEED = 50
 DEFAULTTIMEWAIT = 0
-DEFAULTPROPORTION = 0.2
+DEFAULTPROPORTION = 0.3
 DEFAULTI = 0.04
 DEFAULTD = 0
 ACCUMI = 0
@@ -135,7 +135,7 @@ def iswhite(h, s, v):
 
 
 def isgreen(h, s, v):
-    return BLACKTHRESHOLD < v < WHITETHRESHOLD and 50 < s < 90  # TODO need changes
+    return BLACKTHRESHOLD < v < WHITETHRESHOLD and 50 < h < 90  # TODO need changes
 
 
 def isred(h, s, v):
@@ -186,6 +186,9 @@ while True:
             updatedata()
             MOTORL.run(-DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
+        MOTORL.run(DEFAULTTURNSPEED)
+        MOTORR.run(-DEFAULTTURNSPEED)
+        time.sleep(1.3)
     elif isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
         print("right")
         eliftempcnt=0
@@ -202,6 +205,11 @@ while True:
             updatedata()
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(-DEFAULTTURNSPEED)
+        MOTORL.run(-DEFAULTTURNSPEED)
+        MOTORR.run(DEFAULTTURNSPEED)
+        time.sleep(1.3)
+    elif isgreen(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+        
     print(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s, BOTTOM_LEFT_OBJ.v)
     print(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s, BOTTOM_MIDDLE_OBJ.v)
     print(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s, BOTTOM_RIGHT_OBJ.v)
