@@ -19,14 +19,16 @@ MOTORL = Motor(Port.C)
 MOTORR = Motor(Port.D)
 MOTORARMBASE = Motor(Port.B)
 MOTORARMHANDS = Motor(Port.A)
-# TOUCHL = TouchSensor(Port.S4)
-# TOUCHR = TouchSensor(Port.S3)
+TOUCHL = TouchSensor(Port.S4)
+TOUCHR = TouchSensor(Port.S3)
+BACKCOLOR = ColorSensor(Port.S1)
+
 
 DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
 DEFAULTSPEED = 70
-DEFAULTTURNSPEED = 50
+DEFAULTTURNSPEED = 70
 DEFAULTTIMEWAIT = 0
 DEFAULTPROPORTION = 0.24
 DEFAULTI = 0.04
@@ -51,7 +53,7 @@ MIDDLE_RIGHT_OBJ = []
 TOP_LEFT_OBJ = []
 TOP_MIDDLE_OBJ = []
 TOP_RIGHT_OBJ = []
-WHITETHRESHOLD = 160
+WHITETHRESHOLD = 190
 BLACKTHRESHOLD = 60
 SATURATIONTHRESHOLD = 150
 BEFLNUM = 0
@@ -59,6 +61,8 @@ BEFRNUM = 0
 TIMESTAMP = ""
 TIMESTAMPCNT = 0
 BEFORETIMESTAMP = ""
+CNT = 0
+ISRESCUE = False
 
 client = TechnoClient(host="roboberry.local", port=8085)
 CLIENT_LEFT_TOP_X = 102
@@ -70,7 +74,8 @@ VERTICAL_BOX = 3
 HORIZONTAL_GAP = 125
 VERTICAL_GAP = 25
 
-
+BASEDEGREE = 0
+ARMDEGREE = 0
 
 class LINE:
 
@@ -90,11 +95,7 @@ class RESCUE_OBJ_DETECTION:
         self.target_url = "http://roboberry.local:81/techno_cam/rescue_objects"
 
     def getdata(self):
-        try:
-            json_data = urequests.get(self.target_url).json()
-        except:
-            return None
-        return json_data["objects"]
+        return client.rescue(debug=True)
 
 
 def isgreenhue(hue: int):
@@ -129,9 +130,12 @@ def updatedata():
     ACCUMI = BOTTOM_LEFT - BOTTOM_RIGHT
     ACCUMD = (BEFLNUM - BEFRNUM) - (BOTTOM_LEFT - BOTTOM_RIGHT)
     TIMESTAMP = str(now.timestamp)
+    # if BACKCOLOR.reflection()>98:
+    #     ISRESCUE = True
 
 
 def isblack(h, s, v):
+    
     return v < BLACKTHRESHOLD and s < SATURATIONTHRESHOLD
 
 
@@ -140,7 +144,7 @@ def iswhite(h, s, v):
 
 
 def isgreen(h, s, v):
-    return BLACKTHRESHOLD < v < WHITETHRESHOLD and 50 < h < 70 and SATURATIONTHRESHOLD < s
+    return BLACKTHRESHOLD < v < WHITETHRESHOLD and 50 < h < 85 and SATURATIONTHRESHOLD < s
 
 
 def isred(h, s, v):
@@ -150,10 +154,35 @@ def isred(h, s, v):
 # while True:
 # print(LINE_TRACE_SENSOR.getdata())
 
-MOTORARMBASE.run(-100)
+MOTORARMBASE.run(-150)
+MOTORARMHANDS.run(-150)
+
+
+def uturn():
+    global BOTTOM_LEFT_OBJ,BOTTOM_MIDDLE_OBJ,BOTTOM_RIGHT_OBJ,DEFAULTTURNSPEED,MOTORL,MOTORR
+    print("uturn")
+    while not iswhite(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v) and not iswhite(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+        updatedata()
+        MOTORL.run(-DEFAULTTURNSPEED)
+        MOTORR.run(-DEFAULTTURNSPEED)
+    while not iswhite(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
+        updatedata()
+        MOTORL.run(DEFAULTTURNSPEED)
+        MOTORR.run(-DEFAULTTURNSPEED)
+    while not isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
+        updatedata()
+        MOTORL.run(DEFAULTTURNSPEED)
+        MOTORR.run(-DEFAULTTURNSPEED)
 
 # while True:
 #     print(LINE_TRACE_SENSOR.getdata().colors[2].v)
+
+time.sleep(2)
+BASEDEGREE = MOTORARMBASE.angle()
+ARMDEGREE = MOTORARMHANDS.angle()
+MOTORARMBASE.track_target(BASEDEGREE)
+MOTORARMHANDS.track_target(ARMDEGREE)
+
 while True:
     if Button.CENTER in EV3.buttons.pressed():
         MOTORL.brake()
@@ -168,6 +197,8 @@ while True:
                 time.sleep(0.5)
                 break
     updatedata()
+    UPDEGREE=MOTORARMBASE.angle()
+    CNT+=1
     if BEFORETIMESTAMP == TIMESTAMP:
         TIMESTAMPCNT += 1
     else:
@@ -200,13 +231,15 @@ while True:
         MOTORL.brake()
         MOTORR.brake()
         EV3.speaker.beep(frequency=440)
-        while isblack(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s,
+        while not iswhite(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s,
                       BOTTOM_LEFT_OBJ.v) and eliftempcnt < 30:
             updatedata()
             eliftempcnt += 1
             print(eliftempcnt)
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
+            if ISRESCUE:
+                break
         while not isblack(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s,
                           BOTTOM_MIDDLE_OBJ.v) and not isblack(
                               BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s,
@@ -214,19 +247,23 @@ while True:
             updatedata()
             MOTORL.run(-DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
+            if ISRESCUE:
+                break
     elif isblack(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s, BOTTOM_RIGHT_OBJ.v):
         print("right")
         eliftempcnt = 0
         MOTORL.brake()
         MOTORR.brake()
         EV3.speaker.beep(frequency=460)
-        while isblack(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s,
+        while not iswhite(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s,
                       BOTTOM_RIGHT_OBJ.v) and eliftempcnt < 30:
             updatedata()
             eliftempcnt += 1
             print(eliftempcnt)
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
+            if ISRESCUE:
+                break
         while not isblack(BOTTOM_MIDDLE_OBJ.h, BOTTOM_MIDDLE_OBJ.s,
                           BOTTOM_MIDDLE_OBJ.v) and not isblack(
                               BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s,
@@ -234,16 +271,24 @@ while True:
             updatedata()
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(-DEFAULTTURNSPEED)
-    elif isgreen(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s, BOTTOM_LEFT_OBJ.v):
+            if ISRESCUE:
+                break
+    elif isgreen(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s, BOTTOM_LEFT_OBJ.v) and CNT >= 30:
+        CNT = 0
         print("green left")
         MOTORL.brake()
         MOTORR.brake()
         EV3.speaker.beep(frequency=500)
+        if isgreen(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+            EV3.speaker.beep(frequency=1000)
+            uturn()
+            continue
         while not isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v) and not iswhite(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
             updatedata()
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
         if isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+            print("detect black")
             while isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
                 updatedata()
                 MOTORL.run(DEFAULTTURNSPEED)
@@ -256,14 +301,103 @@ while True:
                 updatedata()
                 MOTORL.run(-DEFAULTTURNSPEED)
                 MOTORR.run(DEFAULTTURNSPEED)
-    elif isgreen(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s, BOTTOM_RIGHT_OBJ.v):
+        else:
+            print("is white, skipping")
+    elif isgreen(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s, BOTTOM_RIGHT_OBJ.v) and CNT >= 30:
+        CNT = 0
         print("green right")
         MOTORL.brake()
         MOTORR.brake()
         EV3.speaker.beep(frequency=600)
+        if isgreen(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+            EV3.speaker.beep(frequency=1000)
+            uturn()
+            continue
+        while not isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v) and not iswhite(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+            updatedata()
+            MOTORL.run(DEFAULTTURNSPEED)
+            MOTORR.run(DEFAULTTURNSPEED)
+        if isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+            print("detect black")
+            while isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+                updatedata()
+                MOTORL.run(DEFAULTTURNSPEED)
+                MOTORR.run(DEFAULTTURNSPEED)
+            while isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
+                updatedata()
+                MOTORL.run(DEFAULTTURNSPEED)
+                MOTORR.run(-DEFAULTTURNSPEED)
+            while not isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
+                updatedata()
+                MOTORL.run(DEFAULTTURNSPEED)
+                MOTORR.run(-DEFAULTTURNSPEED)
+        else:
+            print("is white, skipping")
     elif isred(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v) and isred(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v) and isred(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
         MOTORL.brake()
         MOTORR.brake()
         break
+    elif TOUCHL.pressed() or TOUCHR.pressed():
+        print("pressed")
+        EV3.speaker.beep(frequency=700)
+        MOTORL.brake()
+        MOTORR.brake()
+        WASLBLACK = False
+        WASRBLACK = False
+        MOTORL.run(-DEFAULTTURNSPEED)
+        MOTORR.run(-DEFAULTTURNSPEED)
+        time.sleep(1)
+        MOTORL.run(-DEFAULTTURNSPEED)
+        MOTORR.run(DEFAULTTURNSPEED)
+        time.sleep(2)
+        while True:
+            updatedata()
+            if TOUCHR.pressed():
+                MOTORL.run(-DEFAULTTURNSPEED)
+                MOTORR.run(DEFAULTTURNSPEED)
+            else:
+                MOTORL.run(DEFAULTTURNSPEED)
+                MOTORR.run(DEFAULTTURNSPEED-50)
+            if isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+                WASLBLACK = True
+            if isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+                WASRBLACK = True
+            if WASLBLACK and WASRBLACK:
+                break
+        while not isblack(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v):
+            updatedata()
+            MOTORL.run(-DEFAULTTURNSPEED)
+            MOTORR.run(DEFAULTTURNSPEED)
+    elif BACKCOLOR.reflection() > 98 or ISRESCUE:
+        MOTORL.brake()
+        MOTORR.brake()
+        MOTORL.run(100)
+        MOTORR.run(100)
+        time.sleep(3)
+        MOTORARMBASE.track_target(MOTORARMBASE.angle()+146)
+        MIDDLE_X = 2304
+        while True:
+            rescue_now = RESCUE_OBJECT_DETECTION_SENSOR.getdata()
+            print(rescue_now)
+            if len(rescue_now.rescue_data)>0:
+                for i in rescue_now.rescue_data:
+                    if abs(MIDDLE_X - (i.right+i.left)//2)<=700:
+                        print("YES",i.right+i.left)
+                        issilver = i.name == "silver_ball"
+                        MOTORARMHANDS.run(50)
+                        MOTORL.run(100)
+                        MOTORR.run(100)
+                        time.sleep(5)
+                        MOTORARMHANDS.hold()
+                        MOTORL.brake()
+                        MOTORR.brake()
+                        MOTORARMHANDS.run(-1000)
+                        time.sleep(1)
+                        MOTORARMHANDS.hold()
+            MOTORL.run(-100)
+            MOTORR.run(100)
+            time.sleep(0.3)
+            MOTORL.brake()
+            MOTORR.brake()
     BEFLNUM = BOTTOM_LEFT
     BEFRNUM = BOTTOM_RIGHT
