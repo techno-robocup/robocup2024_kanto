@@ -369,6 +369,7 @@ while True:
             MOTORL.run(-DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
     elif BACKCOLOR.reflection() > 98 or ISRESCUE:
+        ISRESCUE = False
         MOTORL.brake()
         MOTORR.brake()
         MOTORL.run(100)
@@ -377,18 +378,110 @@ while True:
         MOTORARMBASE.track_target(MOTORARMBASE.angle()+150)
         MIDDLE_X = 2304
         while True:
+            MOTORL.brake()
+            MOTORR.brake()
             rescue_now = RESCUE_OBJECT_DETECTION_SENSOR.getdata()
             print(rescue_now)
             if len(rescue_now.rescue_data)>0:
+                MINDIFFCOOR = 100000000
+                MINDIFFCOOR_DATA = []
                 for i in rescue_now.rescue_data:
-                    if abs(MIDDLE_X - (i.right+i.left)//2)<=500 and (i.name == "silver_ball" or i.name == "black_ball"):
-                        MOTORL.run(100)
-                        MOTORR.run(100)
-                        time.sleep(1)
-            MOTORL.run(-100)
-            MOTORR.run(100)
-            time.sleep(0.3)
-            MOTORL.brake()
-            MOTORR.brake()
+                    # if abs(MIDDLE_X - (i.right+i.left)//2)<=500 and (i.name == "silver_ball" or i.name == "black_ball"):
+                    if i.name == "silver_ball" or i.name == "black_ball":
+                        if abs(MIDDLE_X - (i.right+i.left)//2)<abs(MINDIFFCOOR - MIDDLE_X):
+                            MINDIFFCOOR = (i.right+i.left)//2
+                            MINDIFFCOOR_DATA = i
+                if i.bottom > 1728: # TODO need change
+                    MOTORARMHANDS.run(200)
+                    time.sleep(3)
+                    MOTORARMHANDS.hold()
+                    MOTORL.run(100)
+                    MOTORR.run(100)
+                    time.sleep(3)
+                    MOTORL.brake()
+                    MOTORR.brake()
+                    MOTORARMHANDS.run(-200)
+                    time.sleep(3)
+                    MOTORARMHANDS.hold()
+                    while True:
+                        rescue_now = RESCUE_OBJECT_DETECTION_SENSOR.getdata()
+                        BOX_OBJ = []
+                        if len(rescue_now.rescue_data)>0:
+                            for i in rescue_now.rescue_data:
+                                if MINDIFFCOOR_DATA.name == "silver_ball":
+                                    if i.name == "green_box":
+                                        BOX_OBJ = i
+                                elif MINDIFFCOOR_DATA.name == "black_ball":
+                                    if i.name == "red_box":
+                                        BOX_OBJ = i
+                        if BOX_OBJ != []:
+                            if BOX_OBJ.bottom > 1728:
+                                MOTORARMBASE.track_target(MOTORARMBASE.angle()+70)
+                                MOTORL.run(100)
+                                MOTORR.run(100)
+                                time.sleep(3)
+                                MOTORL.brake()
+                                MOTORR.brake()
+                                MOTORARMHANDS.run(200)
+                                time.sleep(2)
+                                MOTORARMHANDS.run(-200)
+                                time.sleep(3)
+                                MOTORARMHANDS.hold()
+                                break
+                            elif abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=500:
+                                MOTORL.run(100)
+                                MOTORR.run(100)
+                                time.sleep(0.3)
+                                MOTORL.brake()
+                                MOTORR.brake()
+                            elif MIDDLE_X < (BOX_OBJ.right+BOX_OBJ.left)//2:
+                                MOTORL.run(100)
+                                MOTORR.run(-100)
+                                time.sleep(0.3)
+                                MOTORL.brake()
+                                MOTORR.brake()
+                            elif MIDDLE_X > (BOX_OBJ.right+BOX_OBJ.left)//2:
+                                MOTORL.run(-100)
+                                MOTORR.run(100)
+                                time.sleep(0.3)
+                                MOTORL.brake()
+                                MOTORR.brake()
+                            else:
+                                MOTORL.run(-100)
+                                MOTORR.run(100)
+                                time.sleep(1)
+                                MOTORL.brake() # may change due to
+                                MOTORR.brake() # the place
+                        else:
+                            MOTORL.run(-100)
+                            MOTORR.run(100)
+                            time.sleep(3)
+                            MOTORL.brake()
+                            MOTORR.brake()
+                elif abs(MIDDLE_X - MINDIFFCOOR) <= 500:
+                    MOTORL.run(100)
+                    MOTORR.run(100)
+                    time.sleep(0.3)
+                    MOTORL.brake()
+                    MOTORR.brake()
+                elif MIDDLE_X > MINDIFFCOOR:
+                    MOTORL.run(-100)
+                    MOTORR.run(100)
+                    time.sleep(0.3)
+                    MOTORL.brake()
+                    MOTORR.brake()
+                elif MIDDLE_X < MINDIFFCOOR:
+                    MOTORL.run(100)
+                    MOTORR.run(-100)
+                    time.sleep(0.3)
+                    MOTORL.brake()
+                    MOTORR.brake()
+                else:
+                    MOTORL.run(-100) # may change due to
+                    MOTORR.run(100)  # the place
+                    time.sleep(0.3)
+                    MOTORL.brake()
+                    MOTORR.brake()
+                continue
     BEFLNUM = BOTTOM_LEFT
     BEFRNUM = BOTTOM_RIGHT
