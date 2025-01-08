@@ -25,8 +25,8 @@ MOTORARMHANDS = Motor(Port.A)
 DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
-DEFAULTSPEED = 60
-DEFAULTTURNSPEED = 40
+DEFAULTSPEED = 70
+DEFAULTTURNSPEED = 50
 DEFAULTTIMEWAIT = 0
 DEFAULTPROPORTION = 0.24
 DEFAULTI = 0.04
@@ -52,10 +52,13 @@ TOP_LEFT_OBJ = []
 TOP_MIDDLE_OBJ = []
 TOP_RIGHT_OBJ = []
 WHITETHRESHOLD = 160
-BLACKTHRESHOLD = 70
+BLACKTHRESHOLD = 60
 SATURATIONTHRESHOLD = 150
 BEFLNUM = 0
 BEFRNUM = 0
+TIMESTAMP = ""
+TIMESTAMPCNT = 0
+BEFORETIMESTAMP = ""
 
 client = TechnoClient(host="roboberry.local", port=8085)
 CLIENT_LEFT_TOP_X = 102
@@ -103,28 +106,29 @@ RESCUE_OBJECT_DETECTION_SENSOR = RESCUE_OBJ_DETECTION()
 
 
 def updatedata():
-    global BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT, MIDDLE_LEFT, MIDDLE_MIDDLE, MIDDLE_RIGHT, TOP_LEFT, TOP_MIDDLE, TOP_RIGHT, ACCUMI, ACCUMD, BOTTOM_LEFT_OBJ, BOTTOM_RIGHT_OBJ, BOTTOM_MIDDLE_OBJ, MIDDLE_LEFT_OBJ, MIDDLE_MIDDLE_OBJ, MIDDLE_RIGHT_OBJ, TOP_LEFT_OBJ, TOP_MIDDLE_OBJ, TOP_RIGHT_OBJ, BEFLNUM, BEFRNUM
-    now = LINE_TRACE_SENSOR.getdata().colors
-    BOTTOM_LEFT = now[2].v
-    BOTTOM_MIDDLE = now[5].v
-    BOTTOM_RIGHT = now[8].v
-    MIDDLE_LEFT = now[1].v
-    MIDDLE_MIDDLE = now[4].v
-    MIDDLE_RIGHT = now[7].v
-    TOP_LEFT = now[0].v
-    TOP_MIDDLE = now[3].v
-    TOP_RIGHT = now[6].v
-    BOTTOM_LEFT_OBJ = now[2]
-    BOTTOM_MIDDLE_OBJ = now[5]
-    BOTTOM_RIGHT_OBJ = now[8]
-    MIDDLE_LEFT_OBJ = now[1]
-    MIDDLE_MIDDLE_OBJ = now[4]
-    MIDDLE_RIGHT_OBJ = now[7]
-    TOP_LEFT_OBJ = now[0]
-    TOP_MIDDLE_OBJ = now[3]
-    TOP_RIGHT_OBJ = now[6]
+    global BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT, MIDDLE_LEFT, MIDDLE_MIDDLE, MIDDLE_RIGHT, TOP_LEFT, TOP_MIDDLE, TOP_RIGHT, ACCUMI, ACCUMD, BOTTOM_LEFT_OBJ, BOTTOM_RIGHT_OBJ, BOTTOM_MIDDLE_OBJ, MIDDLE_LEFT_OBJ, MIDDLE_MIDDLE_OBJ, MIDDLE_RIGHT_OBJ, TOP_LEFT_OBJ, TOP_MIDDLE_OBJ, TOP_RIGHT_OBJ, BEFLNUM, BEFRNUM, TIMESTAMP
+    now = LINE_TRACE_SENSOR.getdata()
+    BOTTOM_LEFT = now.colors[2].v
+    BOTTOM_MIDDLE = now.colors[5].v
+    BOTTOM_RIGHT = now.colors[8].v
+    MIDDLE_LEFT = now.colors[1].v
+    MIDDLE_MIDDLE = now.colors[4].v
+    MIDDLE_RIGHT = now.colors[7].v
+    TOP_LEFT = now.colors[0].v
+    TOP_MIDDLE = now.colors[3].v
+    TOP_RIGHT = now.colors[6].v
+    BOTTOM_LEFT_OBJ = now.colors[2]
+    BOTTOM_MIDDLE_OBJ = now.colors[5]
+    BOTTOM_RIGHT_OBJ = now.colors[8]
+    MIDDLE_LEFT_OBJ = now.colors[1]
+    MIDDLE_MIDDLE_OBJ = now.colors[4]
+    MIDDLE_RIGHT_OBJ = now.colors[7]
+    TOP_LEFT_OBJ = now.colors[0]
+    TOP_MIDDLE_OBJ = now.colors[3]
+    TOP_RIGHT_OBJ = now.colors[6]
     ACCUMI = BOTTOM_LEFT - BOTTOM_RIGHT
     ACCUMD = (BEFLNUM - BEFRNUM) - (BOTTOM_LEFT - BOTTOM_RIGHT)
+    TIMESTAMP = str(now.timestamp)
 
 
 def isblack(h, s, v):
@@ -140,8 +144,7 @@ def isgreen(h, s, v):
 
 
 def isred(h, s, v):
-    return BLACKTHRESHOLD < v < WHITETHRESHOLD and (s < 10 or s > 170
-                                                    )  # TODO need changes
+    return (h < 10 or h > 165) and s > SATURATIONTHRESHOLD # TODO need changes
 
 
 # while True:
@@ -165,6 +168,19 @@ while True:
                 time.sleep(0.5)
                 break
     updatedata()
+    if BEFORETIMESTAMP == TIMESTAMP:
+        TIMESTAMPCNT += 1
+    else:
+        BEFORETIMESTAMP = TIMESTAMP
+        TIMESTAMPCNT = 0
+    if TIMESTAMPCNT > 5:
+        MOTORL.brake()
+        MOTORR.brake()
+        while TIMESTAMP == BEFORETIMESTAMP:
+            print("stopping")
+            updatedata()
+        BEFORETIMESTAMP = TIMESTAMP
+        TIMESTAMPCNT = 0
     MOTORL.run(DEFAULTSPEED + DEFAULTPROPORTION *
                (BOTTOM_LEFT - BOTTOM_RIGHT) + DEFAULTI * ACCUMI +
                DEFAULTD * ACCUMD)
@@ -198,9 +214,6 @@ while True:
             updatedata()
             MOTORL.run(-DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
-        MOTORL.run(DEFAULTTURNSPEED)
-        MOTORR.run(-DEFAULTTURNSPEED)
-        time.sleep(0.8)
     elif isblack(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s, BOTTOM_RIGHT_OBJ.v):
         print("right")
         eliftempcnt = 0
@@ -221,9 +234,6 @@ while True:
             updatedata()
             MOTORL.run(DEFAULTTURNSPEED)
             MOTORR.run(-DEFAULTTURNSPEED)
-        MOTORL.run(-DEFAULTTURNSPEED)
-        MOTORR.run(DEFAULTTURNSPEED)
-        time.sleep(0.8)
     elif isgreen(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s, BOTTOM_LEFT_OBJ.v):
         print("green left")
         MOTORL.brake()
@@ -251,5 +261,9 @@ while True:
         MOTORL.brake()
         MOTORR.brake()
         EV3.speaker.beep(frequency=600)
+    elif isred(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v) and isred(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v) and isred(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+        MOTORL.brake()
+        MOTORR.brake()
+        break
     BEFLNUM = BOTTOM_LEFT
     BEFRNUM = BOTTOM_RIGHT
