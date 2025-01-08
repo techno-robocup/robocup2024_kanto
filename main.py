@@ -289,7 +289,7 @@ while True:
             MOTORR.run(DEFAULTTURNSPEED)
         if isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
             print("detect black")
-            while isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+            while not iswhite(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
                 updatedata()
                 MOTORL.run(DEFAULTTURNSPEED)
                 MOTORR.run(DEFAULTTURNSPEED)
@@ -319,7 +319,7 @@ while True:
             MOTORR.run(DEFAULTTURNSPEED)
         if isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
             print("detect black")
-            while isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
+            while not iswhite(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
                 updatedata()
                 MOTORL.run(DEFAULTTURNSPEED)
                 MOTORR.run(DEFAULTTURNSPEED)
@@ -374,26 +374,17 @@ while True:
         MOTORL.run(100)
         MOTORR.run(100)
         time.sleep(3)
-        MOTORARMBASE.track_target(MOTORARMBASE.angle()+146)
+        MOTORARMBASE.track_target(MOTORARMBASE.angle()+150)
         MIDDLE_X = 2304
         while True:
             rescue_now = RESCUE_OBJECT_DETECTION_SENSOR.getdata()
             print(rescue_now)
             if len(rescue_now.rescue_data)>0:
                 for i in rescue_now.rescue_data:
-                    if abs(MIDDLE_X - (i.right+i.left)//2)<=700:
-                        print("YES",i.right+i.left)
-                        issilver = i.name == "silver_ball"
-                        MOTORARMHANDS.run(50)
+                    if abs(MIDDLE_X - (i.right+i.left)//2)<=500 and (i.name == "silver_ball" or i.name == "black_ball"):
                         MOTORL.run(100)
                         MOTORR.run(100)
-                        time.sleep(5)
-                        MOTORARMHANDS.hold()
-                        MOTORL.brake()
-                        MOTORR.brake()
-                        MOTORARMHANDS.run(-1000)
                         time.sleep(1)
-                        MOTORARMHANDS.hold()
             MOTORL.run(-100)
             MOTORR.run(100)
             time.sleep(0.3)
