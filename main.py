@@ -130,8 +130,8 @@ def updatedata():
     ACCUMI = BOTTOM_LEFT - BOTTOM_RIGHT
     ACCUMD = (BEFLNUM - BEFRNUM) - (BOTTOM_LEFT - BOTTOM_RIGHT)
     TIMESTAMP = str(now.timestamp)
-    # if BACKCOLOR.reflection()>98:
-    #     ISRESCUE = True
+    if BACKCOLOR.reflection()>98:
+        ISRESCUE = True
 
 
 def isblack(h, s, v):
@@ -368,7 +368,7 @@ while True:
             updatedata()
             MOTORL.run(-DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
-    elif BACKCOLOR.reflection() > 98:
+    elif BACKCOLOR.reflection() > 98 or ISRESCUE:
         EV3.speaker.beep(frequency=1000)
         ISRESCUE = False
         MOTORL.brake()
@@ -394,13 +394,14 @@ while True:
                         if abs(MIDDLE_X - (i.right+i.left)//2)<abs(MINDIFFCOOR - MIDDLE_X):
                             MINDIFFCOOR = (i.right+i.left)//2
                             MINDIFFCOOR_DATA = i
-                if i.bottom > 1728: # TODO need change
+                if i.bottom > 1209 and abs(MIDDLE_X - (i.right+i.left)//2)<=500: # TODO need change
+                    print(MINDIFFCOOR_DATA.name + " detected as near and middle")
                     MOTORARMHANDS.run(200)
                     time.sleep(3)
                     MOTORARMHANDS.hold()
                     MOTORL.run(100)
                     MOTORR.run(100)
-                    time.sleep(3)
+                    time.sleep(7)
                     MOTORL.brake()
                     MOTORR.brake()
                     MOTORARMHANDS.run(-200)
@@ -418,35 +419,37 @@ while True:
                                     if i.name == "red_box":
                                         BOX_OBJ = i
                         if BOX_OBJ != []:
-                            if BOX_OBJ.bottom > 1728:
-                                MOTORARMBASE.track_target(MOTORARMBASE.angle()+70)
-                                MOTORL.run(100)
-                                MOTORR.run(100)
-                                time.sleep(3)
+                            if BOX_OBJ.bottom > 1209:
+                                MOTORARMBASE.track_target(MOTORARMBASE.angle()-150)
+                                while not TOUCHL.pressed() or not TOUCHR.pressed()
+                                    MOTORL.run(100)
+                                    MOTORR.run(100)
                                 MOTORL.brake()
                                 MOTORR.brake()
+                                MOTORARMBASE.track_target(MOTORARMBASE.angle()+70)
                                 MOTORARMHANDS.run(200)
                                 time.sleep(2)
                                 MOTORARMHANDS.run(-200)
                                 time.sleep(3)
                                 MOTORARMHANDS.hold()
+                                MOTORARMBASE.track_target(MOTORARMBASE.angle()+80)
                                 break
                             elif abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=500:
                                 MOTORL.run(100)
                                 MOTORR.run(100)
-                                time.sleep(0.3)
+                                time.sleep(0.9)
                                 MOTORL.brake()
                                 MOTORR.brake()
                             elif MIDDLE_X < (BOX_OBJ.right+BOX_OBJ.left)//2:
                                 MOTORL.run(100)
                                 MOTORR.run(-100)
-                                time.sleep(0.3)
+                                time.sleep(0.7)
                                 MOTORL.brake()
                                 MOTORR.brake()
                             elif MIDDLE_X > (BOX_OBJ.right+BOX_OBJ.left)//2:
                                 MOTORL.run(-100)
                                 MOTORR.run(100)
-                                time.sleep(0.3)
+                                time.sleep(0.7)
                                 MOTORL.brake()
                                 MOTORR.brake()
                             else:
@@ -458,31 +461,31 @@ while True:
                         else:
                             MOTORL.run(-100)
                             MOTORR.run(100)
-                            time.sleep(3)
+                            time.sleep(2)
                             MOTORL.brake()
                             MOTORR.brake()
                 elif abs(MIDDLE_X - MINDIFFCOOR) <= 500:
                     MOTORL.run(100)
                     MOTORR.run(100)
-                    time.sleep(0.3)
+                    time.sleep(0.7)
                     MOTORL.brake()
                     MOTORR.brake()
                 elif MIDDLE_X > MINDIFFCOOR:
                     MOTORL.run(-100)
                     MOTORR.run(100)
-                    time.sleep(0.3)
+                    time.sleep(0.7)
                     MOTORL.brake()
                     MOTORR.brake()
                 elif MIDDLE_X < MINDIFFCOOR:
                     MOTORL.run(100)
                     MOTORR.run(-100)
-                    time.sleep(0.3)
+                    time.sleep(0.7)
                     MOTORL.brake()
                     MOTORR.brake()
                 else:
                     MOTORL.run(-100) # may change due to
                     MOTORR.run(100)  # the place
-                    time.sleep(0.3)
+                    time.sleep(1)
                     MOTORL.brake()
                     MOTORR.brake()
                 continue
