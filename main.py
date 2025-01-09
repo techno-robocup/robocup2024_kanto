@@ -144,7 +144,7 @@ def iswhite(h, s, v):
 
 
 def isgreen(h, s, v):
-    return BLACKTHRESHOLD < v < WHITETHRESHOLD and 50 < h < 85 and SATURATIONTHRESHOLD < s
+    return 50 < h < 85 and SATURATIONTHRESHOLD < s
 
 
 def isred(h, s, v):
