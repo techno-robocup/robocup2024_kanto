@@ -54,7 +54,7 @@ TOP_LEFT_OBJ = []
 TOP_MIDDLE_OBJ = []
 TOP_RIGHT_OBJ = []
 WHITETHRESHOLD = 190
-BLACKTHRESHOLD = 60
+BLACKTHRESHOLD = 73
 SATURATIONTHRESHOLD = 150
 BEFLNUM = 0
 BEFRNUM = 0
@@ -368,10 +368,13 @@ while True:
             updatedata()
             MOTORL.run(-DEFAULTTURNSPEED)
             MOTORR.run(DEFAULTTURNSPEED)
-    elif BACKCOLOR.reflection() > 98 or ISRESCUE:
+    elif BACKCOLOR.reflection() > 98:
+        EV3.speaker.beep(frequency=1000)
         ISRESCUE = False
         MOTORL.brake()
         MOTORR.brake()
+        if not BACKCOLOR.reflection()>98:
+            continue
         MOTORL.run(100)
         MOTORR.run(100)
         time.sleep(3)
