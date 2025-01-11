@@ -24,6 +24,7 @@ MOTORARMHANDS = Motor(Port.A)
 TOUCHL = TouchSensor(Port.S4)
 TOUCHR = TouchSensor(Port.S3)
 BACKCOLOR = ColorSensor(Port.S1)
+EV3.light.off()
 
 
 DEBUGPRINT = False
@@ -348,15 +349,16 @@ while True:
         WASRBLACK = False
         MOTORL.run(-DEFAULTTURNSPEED)
         MOTORR.run(-DEFAULTTURNSPEED)
-        time.sleep(1)
+        time.sleep(2)
         MOTORL.run(-DEFAULTTURNSPEED)
         MOTORR.run(DEFAULTTURNSPEED)
-        time.sleep(2)
+        time.sleep(5)
         while True:
             updatedata()
             if TOUCHR.pressed():
-                MOTORL.run(-DEFAULTTURNSPEED)
+                MOTORL.run(DEFAULTTURNSPEED-50)
                 MOTORR.run(DEFAULTTURNSPEED)
+                time.sleep(0.3)
             else:
                 MOTORL.run(DEFAULTTURNSPEED)
                 MOTORR.run(DEFAULTTURNSPEED-50)
@@ -409,14 +411,14 @@ while True:
                         if abs(MIDDLE_X - (i.right+i.left)//2)<abs(MINDIFFCOOR - MIDDLE_X) and (GREEN_BOX_DATA.top+GREEN_BOX_DATA.bottom)//2 < (i.top+i.bottom)//2:
                             MINDIFFCOOR = (i.right+i.left)//2
                             MINDIFFCOOR_DATA = i
-                if MINDIFFCOOR_DATA.name != "NULL" and MINDIFFCOOR_DATA.bottom > 1209 and abs(MIDDLE_X - (MINDIFFCOOR_DATA.right+MINDIFFCOOR_DATA.left)//2)<=400: # TODO need change
+                if MINDIFFCOOR_DATA.name != "NULL" and MINDIFFCOOR_DATA.bottom > 1296 and abs(MIDDLE_X - (MINDIFFCOOR_DATA.right+MINDIFFCOOR_DATA.left)//2)<=400: # TODO need change
                     print(MINDIFFCOOR_DATA.name + " detected as near and middle")
                     MOTORARMHANDS.run(500)
                     time.sleep(2)
                     MOTORARMHANDS.hold()
                     MOTORL.run(250)
                     MOTORR.run(250)
-                    time.sleep(3.4)
+                    time.sleep(2.5)
                     MOTORL.brake()
                     MOTORR.brake()
                     MOTORARMHANDS.run(-500)
@@ -434,35 +436,35 @@ while True:
                                     if i.name == "red_box":
                                         BOX_OBJ = i
                         if BOX_OBJ != []:
-                            if BOX_OBJ.bottom > 1209 and abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=500:
+                            if BOX_OBJ.bottom > 1296 and abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=500:
                                 MOTORARMBASE.track_target(MOTORARMBASE.angle()-150)
                                 while not TOUCHL.pressed() and not TOUCHR.pressed():
                                     MOTORL.run(300)
                                     MOTORR.run(300)
-                                MOTORL.run(100)
-                                MOTORR.run(100)
+                                MOTORL.run(300)
+                                MOTORR.run(300)
                                 time.sleep(2)
                                 MOTORL.brake()
                                 MOTORR.brake()
                                 MOTORARMBASE.track_target(MOTORARMBASE.angle()+90)
                                 MOTORARMHANDS.run(500)
                                 time.sleep(2)
-                                MOTORARMHANDS.run(-500)
-                                time.sleep(3)
                                 MOTORARMHANDS.hold()
                                 MOTORARMBASE.track_target(MOTORARMBASE.angle()-90)
                                 MOTORL.run(-300)
                                 MOTORR.run(-300)
-                                time.sleep(2)
+                                MOTORARMHANDS.run(-500)
+                                MOTORARMHANDS.hold()
+                                time.sleep(3)
                                 MOTORARMBASE.track_target(MOTORARMBASE.angle()+150)
                                 break
-                            elif abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=400 and BOX_OBJ.bottom>1209:
+                            elif abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=400 and BOX_OBJ.bottom>1296:
                                 MOTORL.run(-100)
                                 MOTORR.run(-100)
                                 time.sleep(0.9)
                                 MOTORL.brake()
                                 MOTORR.brake()
-                            elif abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=400 and BOX_OBJ.bottom<=1209:
+                            elif abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=400 and BOX_OBJ.bottom<=1296:
                                 MOTORL.run(100)
                                 MOTORR.run(100)
                                 time.sleep(1.2)
@@ -498,16 +500,16 @@ while True:
                     time.sleep(1)
                     MOTORL.brake()
                     MOTORR.brake()
-                elif abs(MIDDLE_X - MINDIFFCOOR) <= 650:
+                elif abs(MIDDLE_X - MINDIFFCOOR) <= 400:
                     MOTORL.run(100)
                     MOTORR.run(100)
                     time.sleep(0.7)
                     MOTORL.brake()
                     MOTORR.brake()
-                    if MINDIFFCOOR_DATA.bottom > 1209:
+                    if MINDIFFCOOR_DATA.bottom > 1296:
                         MOTORL.run(-100)
                         MOTORR.run(-100)
-                        time.sleep(1)
+                        time.sleep(2)
                         MOTORL.brake()
                         MOTORR.brake()
                 elif MIDDLE_X > MINDIFFCOOR:
@@ -516,7 +518,7 @@ while True:
                     time.sleep(0.7)
                     MOTORL.brake()
                     MOTORR.brake()
-                    if MINDIFFCOOR_DATA.bottom > 1209:
+                    if MINDIFFCOOR_DATA.bottom > 1296:
                         MOTORL.run(-100)
                         MOTORR.run(-100)
                         time.sleep(1)
@@ -528,7 +530,7 @@ while True:
                     time.sleep(0.7)
                     MOTORL.brake()
                     MOTORR.brake()
-                    if MINDIFFCOOR_DATA.bottom > 1209:
+                    if MINDIFFCOOR_DATA.bottom > 1296:
                         MOTORL.run(-100)
                         MOTORR.run(-100)
                         time.sleep(1)
