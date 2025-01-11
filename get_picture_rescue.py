@@ -1,5 +1,28 @@
+#!/usr/bin/env pybricks-micropython
+from pybricks.hubs import EV3Brick
+from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
+                                 InfraredSensor, UltrasonicSensor, GyroSensor)
+from pybricks.parameters import Port, Stop, Direction, Button, Color
+from pybricks.tools import wait, StopWatch, DataLog
+from pybricks.robotics import DriveBase
+from pybricks.media.ev3dev import SoundFile, ImageFile
 from techno_client.techno_client.techno_client import TechnoClient
+from techno_client.techno_client.techno_data import RescueData
+import urequests
+import socket
+import time
+import copy
 
+from techno_client.techno_client.techno_client import TechnoClient
+EV3 = EV3Brick()
+MOTORL = Motor(Port.C)
+MOTORR = Motor(Port.D)
+MOTORARMBASE = Motor(Port.B)
+MOTORARMHANDS = Motor(Port.A)
+TOUCHL = TouchSensor(Port.S4)
+TOUCHR = TouchSensor(Port.S3)
+BACKCOLOR = ColorSensor(Port.S1)
+EV3.light.off()
 client = TechnoClient(host="roboberry.local", port=8085)
 CLIENT_LEFT_TOP_X = 408
 CLIENT_LEFT_TOP_Y = 0

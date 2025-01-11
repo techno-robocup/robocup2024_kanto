@@ -30,8 +30,8 @@ EV3.light.off()
 DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
-DEFAULTSPEED = 70
-DEFAULTTURNSPEED = 70
+DEFAULTSPEED = 120
+DEFAULTTURNSPEED = 90
 DEFAULTTIMEWAIT = 0
 DEFAULTPROPORTION = 0.24
 DEFAULTI = 0.04
@@ -58,7 +58,7 @@ TOP_MIDDLE_OBJ = []
 TOP_RIGHT_OBJ = []
 WHITETHRESHOLD = 200
 BLACKTHRESHOLD = 80
-SATURATIONTHRESHOLD = 155
+SATURATIONTHRESHOLD = 220
 BEFLNUM = 0
 BEFRNUM = 0
 TIMESTAMP = ""
@@ -147,11 +147,11 @@ def iswhite(h, s, v):
 
 
 def isgreen(h, s, v):
-    return 55 < h < 65 and SATURATIONTHRESHOLD < s
+    return 50 < h < 60 and SATURATIONTHRESHOLD < s
 
 
 def isred(h, s, v):
-    return (h < 10 or h > 165) and s > SATURATIONTHRESHOLD # TODO need changes
+    return (h < 10 or h > 165) and s > 180 # TODO need changes
 
 
 # while True:
@@ -348,7 +348,7 @@ while True:
                 MOTORR.run(-DEFAULTTURNSPEED)
         else:
             print("is white, skipping")
-    elif isred(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v) and isred(BOTTOM_MIDDLE_OBJ.h,BOTTOM_MIDDLE_OBJ.s,BOTTOM_MIDDLE_OBJ.v) and isred(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
+    elif isred(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v) and isred(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
         MOTORL.brake()
         MOTORR.brake()
         break
@@ -364,7 +364,7 @@ while True:
         time.sleep(2)
         MOTORL.run(-DEFAULTTURNSPEED)
         MOTORR.run(DEFAULTTURNSPEED)
-        time.sleep(5)
+        time.sleep(2)
         while True:
             updatedata()
             if TOUCHR.pressed():
@@ -394,7 +394,7 @@ while True:
         MOTORL.run(90)
         MOTORR.run(100)
         time.sleep(3)
-        MOTORARMBASE.track_target(MOTORARMBASE.angle()+150)
+        MOTORARMBASE.track_target(MOTORARMBASE.angle()+145)
         MIDDLE_X = 2304
         while True:
             MOTORL.brake()
@@ -430,7 +430,7 @@ while True:
                     MOTORARMHANDS.hold()
                     MOTORL.run(250)
                     MOTORR.run(250)
-                    time.sleep(2.5)
+                    time.sleep(2.2)
                     MOTORL.brake()
                     MOTORR.brake()
                     MOTORARMHANDS.run(-500)
@@ -449,7 +449,7 @@ while True:
                                         BOX_OBJ = i
                         if BOX_OBJ != []:
                             if BOX_OBJ.bottom > 1296 and abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=500:
-                                MOTORARMBASE.track_target(MOTORARMBASE.angle()-150)
+                                MOTORARMBASE.track_target(MOTORARMBASE.angle()-145)
                                 while not TOUCHL.pressed() and not TOUCHR.pressed():
                                     MOTORL.run(300)
                                     MOTORR.run(300)
@@ -468,7 +468,7 @@ while True:
                                 MOTORARMHANDS.run(-500)
                                 MOTORARMHANDS.hold()
                                 time.sleep(3)
-                                MOTORARMBASE.track_target(MOTORARMBASE.angle()+150)
+                                MOTORARMBASE.track_target(MOTORARMBASE.angle()+145)
                                 break
                             elif abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=400 and BOX_OBJ.bottom>1296:
                                 MOTORL.run(-100)
