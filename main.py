@@ -57,7 +57,7 @@ TOP_LEFT_OBJ = []
 TOP_MIDDLE_OBJ = []
 TOP_RIGHT_OBJ = []
 WHITETHRESHOLD = 200
-BLACKTHRESHOLD = 40
+BLACKTHRESHOLD = 60
 SATURATIONTHRESHOLD = 220
 BEFLNUM = 0
 BEFRNUM = 0
@@ -147,7 +147,7 @@ def iswhite(h, s, v):
 
 
 def isgreen(h, s, v):
-    return 50 < h < 60 and SATURATIONTHRESHOLD < s
+    return 55 < h < 65 and SATURATIONTHRESHOLD < s
 
 
 def isred(h, s, v):
