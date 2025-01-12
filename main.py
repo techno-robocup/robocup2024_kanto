@@ -235,7 +235,7 @@ while True:
         MOTORR.brake()
         EV3.speaker.beep(frequency=440)
         while not iswhite(BOTTOM_LEFT_OBJ.h, BOTTOM_LEFT_OBJ.s,
-                      BOTTOM_LEFT_OBJ.v) and eliftempcnt < 30:
+                      BOTTOM_LEFT_OBJ.v) and eliftempcnt < 10:
             updatedata()
             eliftempcnt += 1
             print(eliftempcnt)
@@ -259,7 +259,7 @@ while True:
         MOTORR.brake()
         EV3.speaker.beep(frequency=460)
         while not iswhite(BOTTOM_RIGHT_OBJ.h, BOTTOM_RIGHT_OBJ.s,
-                      BOTTOM_RIGHT_OBJ.v) and eliftempcnt < 30:
+                      BOTTOM_RIGHT_OBJ.v) and eliftempcnt < 10:
             updatedata()
             eliftempcnt += 1
             print(eliftempcnt)
@@ -368,12 +368,12 @@ while True:
         while True:
             updatedata()
             if TOUCHR.pressed():
-                MOTORL.run(DEFAULTTURNSPEED-50)
+                MOTORL.run(DEFAULTTURNSPEED-90)
                 MOTORR.run(DEFAULTTURNSPEED)
                 time.sleep(0.3)
             else:
                 MOTORL.run(DEFAULTTURNSPEED)
-                MOTORR.run(DEFAULTTURNSPEED-50)
+                MOTORR.run(DEFAULTTURNSPEED-90)
             if isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
                 WASLBLACK = True
             if isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
