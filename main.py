@@ -391,8 +391,8 @@ while True:
         MOTORR.brake()
         # if not BACKCOLOR.reflection()>98:
         #     continue
-        MOTORL.run(90)
-        MOTORR.run(100)
+        MOTORL.run(150)
+        MOTORR.run(200)
         time.sleep(3)
         MOTORARMBASE.track_target(MOTORARMBASE.angle()+145)
         MIDDLE_X = 2304
