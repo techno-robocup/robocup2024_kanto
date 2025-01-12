@@ -95,7 +95,7 @@ class LINE:
 class RESCUE_OBJ_DETECTION:
 
     def __init__(self):
-        self.target_url = "http://roboberry.local:81/techno_cam/rescue_objects"
+        self.target_url = "http://roboberry.local:81/techno_cam/rescue_objects" # not needed, though just initializing
 
     def getdata(self):
         return client.rescue(debug=True)
