@@ -448,8 +448,11 @@ while True:
                                     if i.name == "red_box":
                                         BOX_OBJ = i
                         if BOX_OBJ != []:
-                            MOTORARMHANDS.run(-1000)
                             if BOX_OBJ.bottom > 1296 and abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=500:
+                                MOTORL.brake()
+                                MOTORR.brake()
+                                MOTORARMHANDS.run(-1000)
+                                time.sleep(1)
                                 MOTORARMBASE.track_target(MOTORARMBASE.angle()-140)
                                 while not TOUCHL.pressed() and not TOUCHR.pressed():
                                     MOTORL.run(300)
