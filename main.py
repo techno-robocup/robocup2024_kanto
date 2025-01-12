@@ -57,7 +57,7 @@ TOP_LEFT_OBJ = []
 TOP_MIDDLE_OBJ = []
 TOP_RIGHT_OBJ = []
 WHITETHRESHOLD = 200
-BLACKTHRESHOLD = 80
+BLACKTHRESHOLD = 40
 SATURATIONTHRESHOLD = 220
 BEFLNUM = 0
 BEFRNUM = 0
@@ -394,7 +394,7 @@ while True:
         MOTORL.run(150)
         MOTORR.run(200)
         time.sleep(3)
-        MOTORARMBASE.track_target(MOTORARMBASE.angle()+145)
+        MOTORARMBASE.track_target(MOTORARMBASE.angle()+140)
         MIDDLE_X = 2304
         while True:
             MOTORL.brake()
@@ -448,8 +448,9 @@ while True:
                                     if i.name == "red_box":
                                         BOX_OBJ = i
                         if BOX_OBJ != []:
+                            MOTORARMHANDS.run(-1000)
                             if BOX_OBJ.bottom > 1296 and abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=500:
-                                MOTORARMBASE.track_target(MOTORARMBASE.angle()-145)
+                                MOTORARMBASE.track_target(MOTORARMBASE.angle()-140)
                                 while not TOUCHL.pressed() and not TOUCHR.pressed():
                                     MOTORL.run(300)
                                     MOTORR.run(300)
@@ -468,7 +469,7 @@ while True:
                                 MOTORARMHANDS.run(-500)
                                 MOTORARMHANDS.hold()
                                 time.sleep(3)
-                                MOTORARMBASE.track_target(MOTORARMBASE.angle()+145)
+                                MOTORARMBASE.track_target(MOTORARMBASE.angle()+140)
                                 break
                             elif abs(MIDDLE_X - (BOX_OBJ.right+BOX_OBJ.left)//2)<=400 and BOX_OBJ.bottom>1296:
                                 MOTORL.run(-100)
