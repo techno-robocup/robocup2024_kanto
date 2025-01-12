@@ -31,7 +31,7 @@ DEBUGPRINT = False
 DEBUGMOTOR = False
 DEBUGCOLORSENSOR = False
 DEFAULTSPEED = 120
-DEFAULTTURNSPEED = 200
+DEFAULTTURNSPEED = 90
 DEFAULTTIMEWAIT = 0
 DEFAULTPROPORTION = 0.24
 DEFAULTI = 0.04
@@ -368,12 +368,12 @@ while True:
         while True:
             updatedata()
             if TOUCHR.pressed():
-                MOTORL.run(DEFAULTTURNSPEED-90)
+                MOTORL.run(DEFAULTTURNSPEED-50)
                 MOTORR.run(DEFAULTTURNSPEED)
                 time.sleep(0.3)
             else:
                 MOTORL.run(DEFAULTTURNSPEED)
-                MOTORR.run(DEFAULTTURNSPEED-90)
+                MOTORR.run(DEFAULTTURNSPEED-50)
             if isblack(BOTTOM_LEFT_OBJ.h,BOTTOM_LEFT_OBJ.s,BOTTOM_LEFT_OBJ.v):
                 WASLBLACK = True
             if isblack(BOTTOM_RIGHT_OBJ.h,BOTTOM_RIGHT_OBJ.s,BOTTOM_RIGHT_OBJ.v):
